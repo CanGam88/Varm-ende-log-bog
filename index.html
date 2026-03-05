@@ -26,6 +26,19 @@
             --input-bg: #1a1c26;
         }
 
+        /* FIX TIL KALENDER-IKON I DARK MODE */
+        input[type="date"] {
+            color-scheme: light;
+            color: var(--text-main);
+        }
+        body.dark-mode input[type="date"] {
+            color-scheme: dark;
+        }
+        body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
         body { 
             margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; 
             background-color: var(--bg-page); color: var(--text-main);
@@ -46,6 +59,7 @@
             cursor: pointer; font-weight: 700; text-transform: uppercase;
         }
 
+        /* DROPDOWN MENU */
         #menuContent { 
             display:none; position:fixed; top:65px; left:20px; 
             background:var(--bg-card); border:1px solid var(--border); 
@@ -87,6 +101,7 @@
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; text-transform: uppercase; }
         .btn-secondary { width:100%; background:none; border:none; margin-top:15px; color:var(--text-muted); font-weight:800; cursor:pointer; text-transform: uppercase; }
 
+        /* MODAL */
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { 
             background: var(--bg-card); color: var(--text-main);
@@ -94,9 +109,11 @@
             border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center;
         }
 
-        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 12px; background: var(--bg-card); border-radius: 8px; text-align: left; }
+        /* LISTER (KLADDER & HISTORIK) */
+        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 12px; background: var(--bg-card); border-radius: 8px; text-align: left; position: relative; }
         .list-item strong { font-size: 16px; display: block; margin-bottom: 4px; }
         .list-item p { margin: 8px 0 0; font-size: 14px; color: var(--text-main); line-height: 1.4; white-space: pre-wrap; }
+        .btn-delete { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ff4444; font-weight: bold; cursor: pointer; padding: 5px; }
         
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
     </style>
@@ -128,10 +145,10 @@
             <label>Arbejdsnummer (5 cifre)</label>
             <input id="workNr" type="text" maxlength="5" placeholder="fx 12345"/>
             <label>Overskrift</label>
-            <input id="headline" type="text" placeholder="Titel..."/>
+            <input id="headline" type="text" placeholder="Titel på hændelsen..."/>
             <label>Beskrivelse</label>
             <textarea id="bodyText" rows="6" placeholder="Skriv detaljer her..."></textarea>
-            <button id="btnSave" class="btn-red">Gem i kladder</button>
+            <button id="btnSave" class="btn-red">Gem som kladde</button>
         </div>
     </section>
 
@@ -139,14 +156,14 @@
         <div class="card">
             <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">KLADDER</h2>
             <div id="draftList"></div>
-            <button id="btnSendAll" class="btn-red" style="display:none;">Send & Arkivér</button>
+            <button id="btnSendAll" class="btn-red" style="display:none; margin-top:20px;">Send & Arkivér i Firebase</button>
         </div>
     </section>
 
     <section id="pageHistory" style="display:none">
         <div class="card">
             <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">HISTORIK</h2>
-            <label>Vælg dato for at se logs</label>
+            <label>Vælg dato i kalenderen</label>
             <input id="historyDate" type="date" onchange="fetchHistory()" />
             <div id="historyList" style="margin-top:20px;"></div>
         </div>
@@ -179,13 +196,29 @@
     const vib = (ms = 40) => { if("vibrate" in navigator) navigator.vibrate(ms); };
     const getToday = () => new Date().toISOString().split('T')[0];
 
-    // Menu & Tema
-    window.toggleMenu = () => { vib(); const m = el('menuContent'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; };
-    window.handleDarkMode = () => { vib(); document.body.classList.toggle('dark-mode'); el('menuContent').style.display = 'none'; };
-    window.showModal = (html) => { el('modal-body').innerHTML = html; el('customModal').style.display = 'block'; };
-    window.closeModal = () => { el('customModal').style.display = 'none'; };
+    // --- UI FUNKTIONER ---
+    window.toggleMenu = () => { 
+        vib(); 
+        const m = el('menuContent'); 
+        m.style.display = (m.style.display === 'block') ? 'none' : 'block'; 
+    };
 
-    // Navigation
+    window.handleDarkMode = () => { 
+        vib(); 
+        document.body.classList.toggle('dark-mode'); 
+        el('menuContent').style.display = 'none'; 
+    };
+
+    window.showModal = (html) => { 
+        el('modal-body').innerHTML = html; 
+        el('customModal').style.display = 'block'; 
+    };
+
+    window.closeModal = () => { 
+        el('customModal').style.display = 'none'; 
+    };
+
+    // --- NAVIGATION ---
     window.showPage = (pageId, tabId) => {
         vib(20);
         ['pageNew', 'pageDrafts', 'pageHistory'].forEach(p => el(p).style.display = 'none');
@@ -196,60 +229,73 @@
         if(pageId === 'pageHistory') el('historyDate').value = getToday();
     };
 
-    // Gem Kladde
+    // --- LOGIK: GEM & SEND ---
     el('logDate').value = getToday();
+
     el('btnSave').onclick = () => {
-        const d = { date: el('logDate').value, workNr: el('workNr').value, headline: el('headline').value, body: el('bodyText').value };
-        if(d.workNr.length !== 5 || !d.headline) return alert("Udfyld alt korrekt.");
+        const d = { 
+            date: el('logDate').value, 
+            workNr: el('workNr').value, 
+            headline: el('headline').value, 
+            body: el('bodyText').value 
+        };
+        if(d.workNr.length !== 5 || !d.headline) return alert("Udfyld venligst overskrift og 5-cifret arbejdsnummer.");
+        
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        
         vib(60);
-        showModal(`<h2>GEMT</h2><p>Loggen er lagt i kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
+        showModal(`<h2>GEMT</h2><p>Loggen ligger nu under kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
+    };
+
+    window.deleteDraft = (index) => {
+        let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        drafts.splice(index, 1);
+        localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        renderDrafts();
     };
 
     function renderDrafts() {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         el('btnSendAll').style.display = drafts.length ? 'block' : 'none';
-        el('draftList').innerHTML = drafts.length ? drafts.map(d => `
+        el('draftList').innerHTML = drafts.length ? drafts.map((d, i) => `
             <div class="list-item">
+                <button class="btn-delete" onclick="deleteDraft(${i})">X</button>
                 <strong>${d.headline}</strong>
                 <small>${d.date} | Nr: ${d.workNr}</small>
             </div>
         `).join('') : "<p style='text-align:center;'>Ingen kladder fundet.</p>";
     }
 
-    // Send kladder til Firebase
     el('btnSendAll').onclick = async () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         vib(100);
         try {
-            for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
+            for(let d of drafts) { 
+                await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); 
+            }
             const mailTo = localStorage.getItem('rw_mails') || "";
             const body = drafts.map(d => `DATO: ${d.date}%0ANR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}`).join('%0A%0A');
             window.location.href = `mailto:${mailTo}?subject=Logs&body=${body}`;
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-        } catch(e) { alert("Fejl: " + e.message); }
+        } catch(e) { alert("Firebase fejl: " + e.message); }
     };
 
-    // HENT HISTORIK FRA FIREBASE
+    // --- HISTORIK HENTNING ---
     window.fetchHistory = async () => {
         const selectedDate = el('historyDate').value;
         if(!selectedDate) return;
-        
-        el('historyList').innerHTML = "<p style='text-align:center;'>Henter data...</p>";
-        
+        el('historyList').innerHTML = "<p style='text-align:center;'>Søger i skyen...</p>";
         try {
             const q = query(collection(db, "logs"), where("date", "==", selectedDate));
             const querySnapshot = await getDocs(q);
-            
             if (querySnapshot.empty) {
                 el('historyList').innerHTML = "<p style='text-align:center;'>Ingen logs fundet for denne dato.</p>";
                 return;
             }
-
             let html = "";
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -258,25 +304,24 @@
                         <strong>${data.headline}</strong>
                         <small>Arbejdsnr: ${data.workNr}</small>
                         <p>${data.body}</p>
-                    </div>
-                `;
+                    </div>`;
             });
             el('historyList').innerHTML = html;
         } catch (e) {
-            el('historyList').innerHTML = "<p style='color:red;'>Fejl ved hentning: " + e.message + "</p>";
+            el('historyList').innerHTML = "<p style='color:red;'>Fejl: " + e.message + "</p>";
         }
     };
 
-    // Admin
+    // --- ADMIN ---
     window.handleAdminOpen = () => {
         el('menuContent').style.display = 'none';
         showModal(`<h2>ADMIN</h2><p>Kode (1234):</p><input type="password" id="adminPwd"><button class="btn-red" id="authBtn">LOG IND</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
         el('authBtn').onclick = () => {
             if(el('adminPwd').value === "1234") {
                 const m = localStorage.getItem('rw_mails') || '';
-                showModal(`<h2>MAILS</h2><input type="text" id="mailSet" value="${m}"><button class="btn-red" id="saveSetBtn">GEM</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
+                showModal(`<h2>MAILS</h2><input type="text" id="mailSet" value="${m}" placeholder="mail1, mail2..."><button class="btn-red" id="saveSetBtn">GEM</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
                 el('saveSetBtn').onclick = () => { localStorage.setItem('rw_mails', el('mailSet').value); vib(); closeModal(); };
-            }
+            } else { alert("Forkert kode!"); }
         };
     };
 </script>
