@@ -24,7 +24,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: #334155;
-            --input-bg: #1a1c26;
+            --input-bg: #2d3139;
         }
 
         body { 
@@ -47,39 +47,45 @@
             display:none; position:fixed; top:65px; left:20px; 
             background:var(--bg-card); border:1px solid var(--border); 
             border-radius:12px; z-index:2000; min-width: 220px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
         }
         .menu-item { width:100%; padding:15px 20px; border:none; background:none; text-align:left; color:var(--text-main); font-weight:700; cursor:pointer; border-bottom:1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 16px; }
 
         .app-container { max-width: 650px; margin: 20px auto; width: 95%; flex: 1; }
-        .card { background: var(--bg-card); padding: 20px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .card { background: var(--bg-card); padding: 20px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
         .tab-container { display: flex; gap: 5px; margin-bottom: 20px; }
         .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 10px; font-size: 12px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; }
         .tab-btn.active { background: var(--rock-red); color: white; }
 
         label { display: block; font-weight: 800; font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
-        input, textarea { width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); background: var(--input-bg); color: var(--text-main); font-size: 16px; box-sizing: border-box; }
         
-        input[type="date"] { color-scheme: light; }
-        body.dark-mode input[type="date"] { color-scheme: dark; }
+        input, textarea { 
+            width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); 
+            background-color: var(--input-bg) !important; color: var(--text-main) !important; 
+            font-size: 16px; box-sizing: border-box; outline: none;
+        }
+        
+        input:-webkit-autofill {
+            -webkit-text-fill-color: var(--text-main) !important;
+            -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset !important;
+        }
 
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 14px; margin-top: 20px; text-transform: uppercase; }
         
-        .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(128,128,128,0.05); border-radius: 8px; }
+        .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
         .list-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .list-info { flex: 1; }
         .list-item strong { font-size: 16px; color: #ffffff; display: block; margin-bottom: 2px; }
         .list-item .info-line { font-size: 12px; color: var(--text-muted); display: block; }
         
-        /* Den glemte body-tekst styling */
-        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 10px; background: rgba(0,0,0,0.15); border-radius: 4px; margin-top: 10px; border: 1px solid var(--border); }
+        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
 
         .list-actions { display: flex; gap: 8px; margin-left: 10px; }
-        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 10px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 10px; white-space: nowrap; }
+        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 12px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; }
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
 
-        .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
+        .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-card); color: var(--text-main); margin: 20% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
 
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
@@ -109,8 +115,10 @@
         <div class="card">
             <label>Dato (Låst)</label>
             <input id="logDate" type="date" readonly />
-            <label>Arbejdsnummer</label>
-            <input id="workNr" type="number" placeholder="Indtast 5 cifre"/>
+            
+            <label>Arbejdsnummer (Maks 5 cifre)</label>
+            <input id="workNr" type="tel" pattern="[0-9]*" maxlength="5" placeholder="Indtast nr..." oninput="this.value = this.value.replace(/[^0-9]/g, '');"/>
+            
             <label>Overskrift</label>
             <input id="headline" type="text" placeholder="Titel..."/>
             <label>Beskrivelse</label>
@@ -199,10 +207,16 @@
             headline: el('headline').value, 
             body: el('bodyText').value 
         };
-        if(!d.workNr || !d.headline) {
-            showModal("<h2>Mangler data</h2><p>Udfyld venligst overskrift og nr.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+
+        if(!d.workNr || d.workNr.length > 5) {
+            showModal("<h2>Ugyldigt nummer</h2><p>Indtast venligst et arbejdsnummer på maks 5 cifre.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
             return;
         }
+        if(!d.headline) {
+            showModal("<h2>Mangler data</h2><p>Udfyld venligst overskriften.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+            return;
+        }
+
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
