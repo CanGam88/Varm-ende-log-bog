@@ -35,7 +35,7 @@
         header { 
             background: var(--rock-red); padding: 0 20px; 
             display: flex; justify-content: space-between; align-items: center;
-            height: 60px; color: white; flex-shrink: 0; position: relative;
+            height: 60px; color: white; position: sticky; top:0; z-index: 1000;
         }
 
         .header-logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; }
@@ -43,12 +43,11 @@
         .btn-menu { 
             background: rgba(255,255,255,0.2); border: 1px solid white; 
             color: white; padding: 6px 16px; border-radius: var(--btn-radius);
-            cursor: pointer; font-weight: 700;
+            cursor: pointer; font-weight: 700; text-transform: uppercase;
         }
 
-        /* DIN MENU STIL */
         #menuContent { 
-            display:none; position:absolute; top:65px; left:20px; 
+            display:none; position:fixed; top:65px; left:20px; 
             background:var(--bg-card); border:1px solid var(--border); 
             border-radius:12px; z-index:2000; min-width: 220px; 
             overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
@@ -57,7 +56,7 @@
             width:100%; padding:15px 20px; border:none; background:none; 
             text-align:left; color:var(--text-main); font-weight:700; 
             cursor:pointer; border-bottom:1px solid var(--border); 
-            display: flex; align-items: center; gap: 10px; 
+            display: flex; align-items: center; gap: 10px; font-size: 16px;
         }
 
         .app-container { max-width: 650px; margin: 20px auto; width: 95%; flex: 1; }
@@ -68,27 +67,26 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .tab-container { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab-container { display: flex; gap: 5px; margin-bottom: 20px; }
         .tab-btn {
             background: none; border: 2px solid var(--rock-red); color: var(--rock-red);
-            padding: 8px 16px; font-size: 12px; font-weight: 800;
-            border-radius: var(--btn-radius); cursor: pointer; flex: 1;
+            padding: 8px 10px; font-size: 11px; font-weight: 800;
+            border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase;
         }
         .tab-btn.active { background: var(--rock-red); color: white; }
 
-        label { display: block; font-weight: 700; font-size: 13px; margin-top: 15px; color: var(--text-muted); text-transform: uppercase; }
+        label { display: block; font-weight: 800; font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
         input, textarea { 
-            width: 100%; padding: 14px; margin-top: 5px; border-radius: 8px; 
+            width: 100%; padding: 14px; border-radius: 8px; 
             border: 2px solid var(--border); background: var(--input-bg); 
             color: var(--text-main); font-size: 16px; box-sizing: border-box; 
         }
         
         input[readonly] { background: var(--bg-page); border-style: dashed; cursor: not-allowed; opacity: 0.7; }
 
-        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; text-transform: uppercase; }
         .btn-secondary { width:100%; background:none; border:none; margin-top:15px; color:var(--text-muted); font-weight:800; cursor:pointer; text-transform: uppercase; }
 
-        /* DIN MODAL STIL */
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { 
             background: var(--bg-card); color: var(--text-main);
@@ -96,7 +94,9 @@
             border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center;
         }
 
-        .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 5px solid var(--rock-red); margin-bottom: 10px; background: var(--input-bg); border-radius: 4px; }
+        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 12px; background: var(--bg-card); border-radius: 8px; text-align: left; }
+        .list-item strong { font-size: 16px; display: block; margin-bottom: 4px; }
+        .list-item p { margin: 8px 0 0; font-size: 14px; color: var(--text-main); line-height: 1.4; white-space: pre-wrap; }
         
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
     </style>
@@ -110,36 +110,46 @@
 
 <div id="menuContent">
     <button onclick="location.reload()" class="menu-item">🏠 Forside / Ny Log</button>
-    <button onclick="toggleDarkMode()" class="menu-item">🌓 Skift Tema</button>
-    <button onclick="openAdminModal()" class="menu-item">⚙️ Indstillinger 🔒</button>
+    <button onclick="handleDarkMode()" class="menu-item">🌓 Skift Tema</button>
+    <button onclick="handleAdminOpen()" class="menu-item">⚙️ Indstillinger 🔒</button>
 </div>
 
 <main class="app-container">
     <div class="tab-container">
-        <button id="tabNew" class="tab-btn active">NY LOG</button>
-        <button id="tabDrafts" class="tab-btn">KLADDER</button>
+        <button id="tabNew" class="tab-btn active" onclick="showPage('pageNew', 'tabNew')">Ny Log</button>
+        <button id="tabDrafts" class="tab-btn" onclick="showPage('pageDrafts', 'tabDrafts')">Kladder</button>
+        <button id="tabHistory" class="tab-btn" onclick="showPage('pageHistory', 'tabHistory')">Historik</button>
     </div>
 
-    <section id="pageNew" class="card">
-        <label>DATO (LÅST)</label>
-        <input id="logDate" type="date" readonly tabindex="-1" />
-        
-        <label>ARBEJDSNUMMER</label>
-        <input id="workNr" type="text" maxlength="5" placeholder="fx 12345"/>
-        
-        <label>OVERSKRIFT</label>
-        <input id="headline" type="text" placeholder="Hvad er der sket?"/>
-        
-        <label>BESKRIVELSE</label>
-        <textarea id="bodyText" rows="5" placeholder="Indtast detaljer her..."></textarea>
-        
-        <button id="btnSave" class="btn-red">GEM KLADDE</button>
+    <section id="pageNew">
+        <div class="card">
+            <label>Dato (Låst)</label>
+            <input id="logDate" type="date" readonly tabindex="-1" />
+            <label>Arbejdsnummer (5 cifre)</label>
+            <input id="workNr" type="text" maxlength="5" placeholder="fx 12345"/>
+            <label>Overskrift</label>
+            <input id="headline" type="text" placeholder="Titel..."/>
+            <label>Beskrivelse</label>
+            <textarea id="bodyText" rows="6" placeholder="Skriv detaljer her..."></textarea>
+            <button id="btnSave" class="btn-red">Gem i kladder</button>
+        </div>
     </section>
 
-    <section id="pageDrafts" class="card" style="display:none">
-        <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">KLADDER</h2>
-        <div id="draftList"></div>
-        <button id="btnSendAll" class="btn-red">SEND RAPPORTER (MAIL)</button>
+    <section id="pageDrafts" style="display:none">
+        <div class="card">
+            <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">KLADDER</h2>
+            <div id="draftList"></div>
+            <button id="btnSendAll" class="btn-red" style="display:none;">Send & Arkivér</button>
+        </div>
+    </section>
+
+    <section id="pageHistory" style="display:none">
+        <div class="card">
+            <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">HISTORIK</h2>
+            <label>Vælg dato for at se logs</label>
+            <input id="historyDate" type="date" onchange="fetchHistory()" />
+            <div id="historyList" style="margin-top:20px;"></div>
+        </div>
     </section>
 </main>
 
@@ -150,9 +160,8 @@
 </div>
 
 <script type="module">
-    // --- FIREBASE SETUP ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDBwdvNeqXGTBKSnrejyxv1rWwPLtcgXuw",
@@ -166,124 +175,109 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- HJÆLPEFUNKTIONER ---
     const el = (id) => document.getElementById(id);
     const vib = (ms = 40) => { if("vibrate" in navigator) navigator.vibrate(ms); };
     const getToday = () => new Date().toISOString().split('T')[0];
 
-    // --- MENU & TEMA (Kopi fra din kode) ---
-    window.toggleMenu = () => { 
-        vib(); 
-        const m = el('menuContent'); 
-        m.style.display = (m.style.display === 'block') ? 'none' : 'block'; 
-    };
-
-    window.toggleDarkMode = () => {
-        vib();
-        document.body.classList.toggle('dark-mode');
-        el('menuContent').style.display = 'none';
-    };
-
-    // Luk menu ved klik udenfor
-    window.onclick = (e) => { 
-        if(!e.target.matches('.btn-menu')) el('menuContent').style.display = 'none'; 
-    };
-
-    // --- NAVIGATION ---
-    function showPage(pageId, tabId) {
-        el('pageNew').style.display = 'none';
-        el('pageDrafts').style.display = 'none';
-        el('tabNew').classList.remove('active');
-        el('tabDrafts').classList.remove('active');
-        
-        el(pageId).style.display = 'block';
-        el(tabId).classList.add('active');
-        if(pageId === 'pageNew') el('logDate').value = getToday();
-    }
-
-    el('tabNew').onclick = () => showPage('pageNew', 'tabNew');
-    el('tabDrafts').onclick = () => { showPage('pageDrafts', 'tabDrafts'); renderDrafts(); };
-
-    // --- MODAL & ADMIN (Din stil) ---
-    window.openAdminModal = () => {
-        el('menuContent').style.display = 'none';
-        showModal(`
-            <h2 style="color:var(--rock-red);">ADMIN LOGIND</h2>
-            <p>Indtast kode:</p>
-            <input type="password" id="adminPwd">
-            <button class="btn-red" id="btnAuth">LOG IND</button>
-            <button class="btn-secondary" onclick="closeModal()">Annuller</button>
-        `);
-        el('btnAuth').onclick = () => {
-            if(el('adminPwd').value === "1234") {
-                const curMails = localStorage.getItem('rw_mails') || '';
-                showModal(`
-                    <h2 style="color:var(--rock-red);">INDSTILLINGER</h2>
-                    <label>E-mail modtagere</label>
-                    <input type="text" id="mailSet" value="${curMails}" placeholder="navn@rockwool.com">
-                    <button class="btn-red" id="btnSaveSet">GEM</button>
-                    <button class="btn-secondary" onclick="closeModal()">LUK</button>
-                `);
-                el('btnSaveSet').onclick = () => {
-                    localStorage.setItem('rw_mails', el('mailSet').value);
-                    vib();
-                    closeModal();
-                };
-            } else { alert("Forkert kode!"); }
-        };
-    };
-
-    function showModal(html) {
-        el('modal-body').innerHTML = html;
-        el('customModal').style.display = 'block';
-    }
+    // Menu & Tema
+    window.toggleMenu = () => { vib(); const m = el('menuContent'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; };
+    window.handleDarkMode = () => { vib(); document.body.classList.toggle('dark-mode'); el('menuContent').style.display = 'none'; };
+    window.showModal = (html) => { el('modal-body').innerHTML = html; el('customModal').style.display = 'block'; };
     window.closeModal = () => { el('customModal').style.display = 'none'; };
 
-    // --- LOGIK: GEM & SEND ---
-    el('logDate').value = getToday();
+    // Navigation
+    window.showPage = (pageId, tabId) => {
+        vib(20);
+        ['pageNew', 'pageDrafts', 'pageHistory'].forEach(p => el(p).style.display = 'none');
+        ['tabNew', 'tabDrafts', 'tabHistory'].forEach(t => el(t).classList.remove('active'));
+        el(pageId).style.display = 'block';
+        el(tabId).classList.add('active');
+        if(pageId === 'pageDrafts') renderDrafts();
+        if(pageId === 'pageHistory') el('historyDate').value = getToday();
+    };
 
+    // Gem Kladde
+    el('logDate').value = getToday();
     el('btnSave').onclick = () => {
-        const d = {
-            date: el('logDate').value,
-            workNr: el('workNr').value,
-            headline: el('headline').value,
-            body: el('bodyText').value
-        };
-        if(d.workNr.length !== 5 || !d.headline) return alert("Udfyld venligst arbejdsnr og overskrift");
-        
+        const d = { date: el('logDate').value, workNr: el('workNr').value, headline: el('headline').value, body: el('bodyText').value };
+        if(d.workNr.length !== 5 || !d.headline) return alert("Udfyld alt korrekt.");
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
-        
         vib(60);
-        showModal(`<h2 style="color:var(--rock-red);">GEMT!</h2><p>Loggen ligger nu under kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
+        showModal(`<h2>GEMT</h2><p>Loggen er lagt i kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
     };
 
     function renderDrafts() {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        el('btnSendAll').style.display = drafts.length ? 'block' : 'none';
         el('draftList').innerHTML = drafts.length ? drafts.map(d => `
             <div class="list-item">
-                <strong>${d.headline}</strong><br>
+                <strong>${d.headline}</strong>
                 <small>${d.date} | Nr: ${d.workNr}</small>
             </div>
-        `).join('') : "<p style='text-align:center;'>Ingen kladder.</p>";
+        `).join('') : "<p style='text-align:center;'>Ingen kladder fundet.</p>";
     }
 
+    // Send kladder til Firebase
     el('btnSendAll').onclick = async () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
-        if(!drafts.length) return;
-        
+        vib(100);
         try {
-            for(let d of drafts) {
-                await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() });
-            }
+            for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
             const mailTo = localStorage.getItem('rw_mails') || "";
-            const body = drafts.map(d => `DATO: ${d.date}%0ANR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}%0A%0A`).join('%0A');
-            window.location.href = `mailto:${mailTo}?subject=Log Rapport&body=${body}`;
+            const body = drafts.map(d => `DATO: ${d.date}%0ANR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}`).join('%0A%0A');
+            window.location.href = `mailto:${mailTo}?subject=Logs&body=${body}`;
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-        } catch(e) { alert(e.message); }
+        } catch(e) { alert("Fejl: " + e.message); }
+    };
+
+    // HENT HISTORIK FRA FIREBASE
+    window.fetchHistory = async () => {
+        const selectedDate = el('historyDate').value;
+        if(!selectedDate) return;
+        
+        el('historyList').innerHTML = "<p style='text-align:center;'>Henter data...</p>";
+        
+        try {
+            const q = query(collection(db, "logs"), where("date", "==", selectedDate));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                el('historyList').innerHTML = "<p style='text-align:center;'>Ingen logs fundet for denne dato.</p>";
+                return;
+            }
+
+            let html = "";
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                html += `
+                    <div class="list-item">
+                        <strong>${data.headline}</strong>
+                        <small>Arbejdsnr: ${data.workNr}</small>
+                        <p>${data.body}</p>
+                    </div>
+                `;
+            });
+            el('historyList').innerHTML = html;
+        } catch (e) {
+            el('historyList').innerHTML = "<p style='color:red;'>Fejl ved hentning: " + e.message + "</p>";
+        }
+    };
+
+    // Admin
+    window.handleAdminOpen = () => {
+        el('menuContent').style.display = 'none';
+        showModal(`<h2>ADMIN</h2><p>Kode (1234):</p><input type="password" id="adminPwd"><button class="btn-red" id="authBtn">LOG IND</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
+        el('authBtn').onclick = () => {
+            if(el('adminPwd').value === "1234") {
+                const m = localStorage.getItem('rw_mails') || '';
+                showModal(`<h2>MAILS</h2><input type="text" id="mailSet" value="${m}"><button class="btn-red" id="saveSetBtn">GEM</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
+                el('saveSetBtn').onclick = () => { localStorage.setItem('rw_mails', el('mailSet').value); vib(); closeModal(); };
+            }
+        };
     };
 </script>
 </body>
