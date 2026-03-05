@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
     <title>ROCKWOOL - Logbog</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --rock-red: #E60028;
@@ -20,27 +21,17 @@
         body.dark-mode {
             --bg-page: #0f111a;
             --bg-card: #1a1c26;
-            --text-main: #f8fafc !important;
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: #334155;
             --input-bg: #1a1c26;
-        }
-
-        /* --- KALENDER IKON FIX --- */
-        input[type="date"] {
-            color-scheme: dark !important;
-            color: var(--text-main) !important;
-        }
-        
-        body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1) brightness(100%) !important;
-            cursor: pointer;
         }
 
         body { 
             margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; 
             background-color: var(--bg-page); color: var(--text-main);
             display: flex; flex-direction: column; min-height: 100vh;
+            transition: background 0.3s ease;
         }
 
         header { 
@@ -67,18 +58,29 @@
         .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 10px; font-size: 12px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; }
         .tab-btn.active { background: var(--rock-red); color: white; }
 
-        label { display: block; font-weight: 800; font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
-        input, textarea { width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); background: var(--input-bg); color: var(--text-main) !important; font-size: 16px; box-sizing: border-box; }
-
-        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; text-transform: uppercase; }
+        label { display: block; font-weight: 800; font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
+        input, textarea { width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); background: var(--input-bg); color: var(--text-main); font-size: 16px; box-sizing: border-box; }
         
-        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(128,128,128,0.05); border-radius: 8px; text-align: left; }
-        .list-item strong { font-size: 18px; color: var(--rock-red); display: block; margin-bottom: 5px; }
-        .list-item .info-line { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 10px; }
-        .list-item .body-content { color: var(--text-main) !important; font-size: 15px; white-space: pre-wrap; display: block; padding: 10px; background: rgba(0,0,0,0.1); border-radius: 4px; }
+        input[type="date"] { color-scheme: light; }
+        body.dark-mode input[type="date"] { color-scheme: dark; }
 
-        .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-        .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
+        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 14px; margin-top: 20px; text-transform: uppercase; }
+        
+        .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(128,128,128,0.05); border-radius: 8px; }
+        .list-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .list-info { flex: 1; }
+        .list-item strong { font-size: 16px; color: #ffffff; display: block; margin-bottom: 2px; }
+        .list-item .info-line { font-size: 12px; color: var(--text-muted); display: block; }
+        
+        /* Den glemte body-tekst styling */
+        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 10px; background: rgba(0,0,0,0.15); border-radius: 4px; margin-top: 10px; border: 1px solid var(--border); }
+
+        .list-actions { display: flex; gap: 8px; margin-left: 10px; }
+        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 10px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 10px; white-space: nowrap; }
+        .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
+
+        .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
+        .modal-content { background: var(--bg-card); color: var(--text-main); margin: 20% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
 
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
     </style>
@@ -92,7 +94,7 @@
 
 <div id="menuContent">
     <button onclick="location.reload()" class="menu-item">🏠 Forside</button>
-    <button onclick="handleDarkMode()" class="menu-item">🌓 Skift Tema</button>
+    <button onclick="toggleTheme()" class="menu-item">🌓 Skift Tema</button>
     <button onclick="handleAdminOpen()" class="menu-item">⚙️ Indstillinger</button>
 </div>
 
@@ -108,7 +110,7 @@
             <label>Dato (Låst)</label>
             <input id="logDate" type="date" readonly />
             <label>Arbejdsnummer</label>
-            <input id="workNr" type="text" maxlength="5" placeholder="Indtast 5 cifre"/>
+            <input id="workNr" type="number" placeholder="Indtast 5 cifre"/>
             <label>Overskrift</label>
             <input id="headline" type="text" placeholder="Titel..."/>
             <label>Beskrivelse</label>
@@ -119,17 +121,18 @@
 
     <section id="pageDrafts" style="display:none">
         <div class="card">
-            <h2 style="color:var(--rock-red)">KLADDER</h2>
+            <h2 style="color:var(--rock-red); margin-top:0;">KLADDER</h2>
             <div id="draftList"></div>
-            <button id="btnSendAll" class="btn-red" style="display:none; margin-top:20px;">SEND & ARKIVÉR</button>
+            <button id="btnSendAll" class="btn-red" style="display:none;">SEND & ARKIVÉR ALLE</button>
         </div>
     </section>
 
     <section id="pageHistory" style="display:none">
         <div class="card">
-            <h2 style="color:var(--rock-red)">HISTORIK</h2>
-            <label>Vælg dato for at se logs</label>
+            <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK</h2>
+            <label>Vælg dato</label>
             <input id="historyDate" type="date" onchange="fetchHistory()" />
+            <button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
             <div id="historyList" style="margin-top:20px;"></div>
         </div>
     </section>
@@ -143,7 +146,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDBwdvNeqXGTBKSnrejyxv1rWwPLtcgXuw",
@@ -157,11 +160,23 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    enableIndexedDbPersistence(db).catch(() => {});
+
     const el = (id) => document.getElementById(id);
     const getToday = () => new Date().toISOString().split('T')[0];
+    const getTimeNow = () => {
+        const now = new Date();
+        return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+    };
+
+    window.toggleTheme = () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('rw_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        el('menuContent').style.display = 'none';
+    };
+    if(localStorage.getItem('rw_theme') === 'light') document.body.classList.remove('dark-mode');
 
     window.toggleMenu = () => { const m = el('menuContent'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; };
-    window.handleDarkMode = () => { document.body.classList.toggle('dark-mode'); el('menuContent').style.display = 'none'; };
     window.showModal = (html) => { el('modal-body').innerHTML = html; el('customModal').style.display = 'block'; };
     window.closeModal = () => { el('customModal').style.display = 'none'; };
 
@@ -177,13 +192,22 @@
     el('logDate').value = getToday();
 
     el('btnSave').onclick = () => {
-        const d = { date: el('logDate').value, workNr: el('workNr').value, headline: el('headline').value, body: el('bodyText').value };
-        if(!d.workNr || !d.headline) return alert("Udfyld venligst overskrift og nr.");
+        const d = { 
+            date: el('logDate').value, 
+            time: getTimeNow(), 
+            workNr: el('workNr').value, 
+            headline: el('headline').value, 
+            body: el('bodyText').value 
+        };
+        if(!d.workNr || !d.headline) {
+            showModal("<h2>Mangler data</h2><p>Udfyld venligst overskrift og nr.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+            return;
+        }
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
-        showModal(`<h2>GEMT</h2><p>Ligger i kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
+        showModal("<h2>Gemt!</h2><p>Kladde er oprettet.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
     };
 
     window.renderDrafts = () => {
@@ -191,66 +215,88 @@
         el('btnSendAll').style.display = drafts.length ? 'block' : 'none';
         el('draftList').innerHTML = drafts.map((d, i) => `
             <div class="list-item">
-                <strong>${d.headline}</strong>
-                <span class="info-line">${d.date} | Nr: ${d.workNr}</span>
-                <span class="body-content">${d.body || 'Ingen tekst'}</span>
+                <div class="list-header">
+                    <div class="list-info">
+                        <strong>${d.headline}</strong>
+                        <span class="info-line">Nr: ${d.workNr} | ${d.date} kl. ${d.time || '--:--'}</span>
+                    </div>
+                    <div class="list-actions">
+                        <button class="btn-small" onclick="editDraft(${i})">Ret</button>
+                        <button class="btn-small delete" onclick="deleteDraft(${i})">Slet</button>
+                    </div>
+                </div>
+                <div class="body-content">${d.body}</div>
             </div>
-        `).join('') || "<p style='text-align:center'>Ingen kladder</p>";
+        `).join('') || "<p style='text-align:center; opacity:0.5;'>Ingen kladder.</p>";
+    };
+
+    window.editDraft = (index) => {
+        let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        const d = drafts[index];
+        el('workNr').value = d.workNr;
+        el('headline').value = d.headline;
+        el('bodyText').value = d.body;
+        drafts.splice(index, 1);
+        localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        showPage('pageNew', 'tabNew');
+    };
+
+    window.deleteDraft = (index) => {
+        let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        drafts.splice(index, 1);
+        localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        renderDrafts();
     };
 
     el('btnSendAll').onclick = async () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        showModal("<h2>Sender...</h2>");
         try {
-            for(let d of drafts) { 
-                await addDoc(collection(db, "logs"), { 
-                    date: d.date, 
-                    workNr: d.workNr, 
-                    headline: d.headline, 
-                    body: d.body, 
-                    sentAt: serverTimestamp() 
-                }); 
-            }
-            const mailTo = localStorage.getItem('rw_mails') || "";
-            const mailBody = drafts.map(d => `NR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}`).join('%0A%0A');
-            window.location.href = `mailto:${mailTo}?subject=Logs&body=${mailBody}`;
+            for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-            showModal(`<h2>SUCCES</h2><p>Logs arkiveret i skyen.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
+            showModal("<h2>Succes!</h2><p>Logs er arkiveret.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
         } catch(e) { alert("Fejl: " + e.message); }
     };
 
     window.fetchHistory = async () => {
-        const selDate = el('historyDate').value;
-        if(!selDate) return;
-        el('historyList').innerHTML = "<p style='text-align:center'>Henter...</p>";
-        try {
-            const q = query(collection(db, "logs"), where("date", "==", selDate));
-            const snap = await getDocs(q);
-            let h = "";
-            snap.forEach(doc => {
-                const data = doc.data();
-                h += `
-                <div class="list-item">
-                    <strong>${data.headline}</strong>
-                    <span class="info-line">Nr: ${data.workNr}</span>
-                    <span class="body-content">${data.body || ''}</span>
-                </div>`;
-            });
-            el('historyList').innerHTML = h || "<p style='text-align:center'>Ingen logs fundet.</p>";
-        } catch(e) { el('historyList').innerHTML = "Fejl: " + e.message; }
+        const date = el('historyDate').value;
+        el('historyList').innerHTML = "<p>Henter...</p>";
+        const q = query(collection(db, "logs"), where("date", "==", date));
+        const snap = await getDocs(q);
+        let h = "";
+        snap.forEach(doc => {
+            const d = doc.data();
+            h += `<div class="card" style="margin-bottom:10px; border-left:4px solid var(--rock-red);">
+                <strong style="color:var(--rock-red);">${d.headline}</strong>
+                <small style="color:var(--text-muted);">Nr: ${d.workNr} ${d.time ? '| kl. ' + d.time : ''}</small>
+                <p style="font-size:14px; white-space:pre-wrap; margin-top:10px;">${d.body}</p>
+            </div>`;
+        });
+        el('historyList').innerHTML = h || "Ingen logs.";
+        el('btnPDF').style.display = h ? 'block' : 'none';
+    };
+
+    window.generatePDF = () => {
+        const element = el('historyList');
+        const isDark = document.body.classList.contains('dark-mode');
+        const opt = { 
+            margin: 10, 
+            filename: `Log-${el('historyDate').value}.pdf`, 
+            html2canvas: { scale: 2, backgroundColor: isDark ? '#1a1c26' : '#ffffff' }, 
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+        };
+        html2pdf().set(opt).from(element).save();
     };
 
     window.handleAdminOpen = () => {
         el('menuContent').style.display = 'none';
-        showModal(`<h2>ADMIN</h2><input type="password" id="pw" placeholder="Kode"><button class="btn-red" onclick="checkPw()">LOG IND</button>`);
+        showModal(`<h2>Admin</h2><input type="password" id="pw" placeholder="Kode"><button class="btn-red" onclick="checkPw()">LOG IND</button>`);
     };
-
-    window.checkPw = () => {
-        if(el('pw').value === "1234") {
-            const m = localStorage.getItem('rw_mails') || '';
-            showModal(`<h2>MAIL</h2><input id="mSet" value="${m}"><button class="btn-red" onclick="saveM()">GEM</button>`);
-        }
-    };
+    window.checkPw = () => { if(el('pw').value === "1234") { 
+        const m = localStorage.getItem('rw_mails') || '';
+        showModal(`<h2>Mail</h2><input id="mSet" value="${m}"><button class="btn-red" onclick="saveM()">GEM</button>`);
+    }};
     window.saveM = () => { localStorage.setItem('rw_mails', el('mSet').value); closeModal(); };
 </script>
 </body>
