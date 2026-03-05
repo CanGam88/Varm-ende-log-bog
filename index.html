@@ -20,26 +20,29 @@
         body.dark-mode {
             --bg-page: #0f111a;
             --bg-card: #1a1c26;
-            --text-main: #f8fafc;
+            --text-main: #f8fafc !important;
             --text-muted: #94a3b8;
             --border: #334155;
             --input-bg: #1a1c26;
         }
 
-        /* --- STÆRK FIX TIL KALENDER-IKON --- */
+        /* --- KALENDER FIX: TVUNGEN HVIDT IKON --- */
         input[type="date"] {
-            color-scheme: light;
-            color: var(--text-main);
-            position: relative;
+            appearance: none;
+            -webkit-appearance: none;
+            min-height: 50px;
+            color: var(--text-main) !important;
         }
-        body.dark-mode input[type="date"] {
-            color-scheme: dark;
-        }
-        /* Tvinger ikonet til at være hvidt i dark mode */
+
+        /* Dette erstatter browserens ikon med et hvidt kalender-ikon manuelt */
         body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(100%) brightness(200%);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 24px;
+            height: 24px;
             cursor: pointer;
-            padding: 5px;
+            filter: none !important;
         }
 
         body { 
@@ -55,78 +58,46 @@
         }
 
         .header-logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; }
-        
-        .btn-menu { 
-            background: rgba(255,255,255,0.2); border: 1px solid white; 
-            color: white; padding: 6px 16px; border-radius: var(--btn-radius);
-            cursor: pointer; font-weight: 700; text-transform: uppercase;
-        }
+        .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 16px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; }
 
         #menuContent { 
             display:none; position:fixed; top:65px; left:20px; 
             background:var(--bg-card); border:1px solid var(--border); 
             border-radius:12px; z-index:2000; min-width: 220px; 
-            overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
         }
-        .menu-item { 
-            width:100%; padding:15px 20px; border:none; background:none; 
-            text-align:left; color:var(--text-main); font-weight:700; 
-            cursor:pointer; border-bottom:1px solid var(--border); 
-            display: flex; align-items: center; gap: 10px; font-size: 16px;
-        }
+        .menu-item { width:100%; padding:15px 20px; border:none; background:none; text-align:left; color:var(--text-main); font-weight:700; cursor:pointer; border-bottom:1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 16px; }
 
         .app-container { max-width: 650px; margin: 20px auto; width: 95%; flex: 1; }
-
-        .card {
-            background: var(--bg-card); padding: 20px;
-            border-radius: var(--radius); margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+        .card { background: var(--bg-card); padding: 20px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
         .tab-container { display: flex; gap: 5px; margin-bottom: 20px; }
-        .tab-btn {
-            background: none; border: 2px solid var(--rock-red); color: var(--rock-red);
-            padding: 8px 10px; font-size: 11px; font-weight: 800;
-            border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase;
-        }
+        .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 10px; font-size: 12px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; }
         .tab-btn.active { background: var(--rock-red); color: white; }
 
         label { display: block; font-weight: 800; font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
-        input, textarea { 
-            width: 100%; padding: 14px; border-radius: 8px; 
-            border: 2px solid var(--border); background: var(--input-bg); 
-            color: var(--text-main); font-size: 16px; box-sizing: border-box; 
-        }
-        
-        input[readonly] { background: var(--bg-page); border-style: dashed; cursor: not-allowed; opacity: 0.7; }
+        input, textarea { width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); background: var(--input-bg); color: var(--text-main) !important; font-size: 16px; box-sizing: border-box; }
 
-        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; text-transform: uppercase; }
-        .btn-secondary { width:100%; background:none; border:none; margin-top:15px; color:var(--text-muted); font-weight:800; cursor:pointer; text-transform: uppercase; }
+        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        
+        /* --- LISTE VISNING FIX --- */
+        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(128,128,128,0.05); border-radius: 8px; text-align: left; position: relative; }
+        .list-item strong { font-size: 18px; color: var(--rock-red); display: block; margin-bottom: 5px; }
+        .list-item .info-line { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 10px; }
+        .list-item .body-content { 
+            color: var(--text-main) !important; 
+            font-size: 15px; 
+            white-space: pre-wrap; 
+            display: block; 
+            padding: 10px; 
+            background: rgba(0,0,0,0.1); 
+            border-radius: 4px;
+        }
 
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-        .modal-content { 
-            background: var(--bg-card); color: var(--text-main);
-            margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; 
-            border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center;
-        }
+        .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
 
-        /* --- LISTE VISNING (KLADDER & HISTORIK) --- */
-        .list-item { 
-            padding: 18px; border-bottom: 1px solid var(--border); 
-            border-left: 6px solid var(--rock-red); margin-bottom: 12px; 
-            background: var(--bg-card); border-radius: 8px; 
-            text-align: left; position: relative;
-        }
-        .list-item strong { font-size: 17px; display: block; margin-bottom: 2px; color: var(--rock-red); }
-        .list-item .info-line { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; display: block; }
-        .list-item p { 
-            margin: 5px 0 0; font-size: 15px; color: var(--text-main); 
-            line-height: 1.5; white-space: pre-wrap; 
-            background: rgba(128,128,128,0.05); padding: 8px; border-radius: 4px;
-        }
-        .btn-delete { position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer; font-weight: bold; }
-        
-        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
+        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
     </style>
 </head>
 <body class="dark-mode">
@@ -137,9 +108,9 @@
 </header>
 
 <div id="menuContent">
-    <button onclick="location.reload()" class="menu-item">🏠 Forside / Ny Log</button>
+    <button onclick="location.reload()" class="menu-item">🏠 Forside</button>
     <button onclick="handleDarkMode()" class="menu-item">🌓 Skift Tema</button>
-    <button onclick="handleAdminOpen()" class="menu-item">⚙️ Indstillinger 🔒</button>
+    <button onclick="handleAdminOpen()" class="menu-item">⚙️ Indstillinger</button>
 </div>
 
 <main class="app-container">
@@ -151,30 +122,30 @@
 
     <section id="pageNew">
         <div class="card">
-            <label>Dato (Låst)</label>
-            <input id="logDate" type="date" readonly tabindex="-1" />
-            <label>Arbejdsnummer (5 cifre)</label>
-            <input id="workNr" type="text" maxlength="5" placeholder="fx 12345"/>
+            <label>Dato</label>
+            <input id="logDate" type="date" readonly />
+            <label>Arbejdsnummer</label>
+            <input id="workNr" type="text" maxlength="5" placeholder="Indtast 5 cifre..."/>
             <label>Overskrift</label>
-            <input id="headline" type="text" placeholder="Titel..."/>
+            <input id="headline" type="text" placeholder="Hvad er sket?"/>
             <label>Beskrivelse</label>
-            <textarea id="bodyText" rows="6" placeholder="Skriv din tekst her..."></textarea>
-            <button id="btnSave" class="btn-red">Gem som kladde</button>
+            <textarea id="bodyText" rows="6" placeholder="Skriv detaljerne her..."></textarea>
+            <button id="btnSave" class="btn-red">GEM KLADDE</button>
         </div>
     </section>
 
     <section id="pageDrafts" style="display:none">
         <div class="card">
-            <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">KLADDER</h2>
+            <h2 style="color:var(--rock-red)">KLADDER</h2>
             <div id="draftList"></div>
-            <button id="btnSendAll" class="btn-red" style="display:none; margin-top:20px;">Send & Arkivér</button>
+            <button id="btnSendAll" class="btn-red" style="display:none;">SEND & ARKIVÉR</button>
         </div>
     </section>
 
     <section id="pageHistory" style="display:none">
         <div class="card">
-            <h2 style="margin-top:0; color:var(--rock-red); font-weight:900;">HISTORIK</h2>
-            <label>Vælg dato for at søge</label>
+            <h2 style="color:var(--rock-red)">HISTORIK</h2>
+            <label>Søg dato</label>
             <input id="historyDate" type="date" onchange="fetchHistory()" />
             <div id="historyList" style="margin-top:20px;"></div>
         </div>
@@ -204,16 +175,14 @@
     const db = getFirestore(app);
 
     const el = (id) => document.getElementById(id);
-    const vib = (ms = 40) => { if("vibrate" in navigator) navigator.vibrate(ms); };
     const getToday = () => new Date().toISOString().split('T')[0];
 
-    window.toggleMenu = () => { vib(); const m = el('menuContent'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; };
-    window.handleDarkMode = () => { vib(); document.body.classList.toggle('dark-mode'); el('menuContent').style.display = 'none'; };
+    window.toggleMenu = () => { const m = el('menuContent'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; };
+    window.handleDarkMode = () => { document.body.classList.toggle('dark-mode'); el('menuContent').style.display = 'none'; };
     window.showModal = (html) => { el('modal-body').innerHTML = html; el('customModal').style.display = 'block'; };
     window.closeModal = () => { el('customModal').style.display = 'none'; };
 
     window.showPage = (pageId, tabId) => {
-        vib(20);
         ['pageNew', 'pageDrafts', 'pageHistory'].forEach(p => el(p).style.display = 'none');
         ['tabNew', 'tabDrafts', 'tabHistory'].forEach(t => el(t).classList.remove('active'));
         el(pageId).style.display = 'block';
@@ -225,92 +194,63 @@
     el('logDate').value = getToday();
 
     el('btnSave').onclick = () => {
-        const d = { 
-            date: el('logDate').value, 
-            workNr: el('workNr').value, 
-            headline: el('headline').value, 
-            body: el('bodyText').value 
-        };
-        if(d.workNr.length !== 5 || !d.headline) return alert("Udfyld venligst overskrift og arbejdsnummer.");
-        
+        const d = { date: el('logDate').value, workNr: el('workNr').value, headline: el('headline').value, body: el('bodyText').value };
+        if(!d.workNr || !d.headline) return alert("Mangler data");
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
-        
-        vib(60);
-        showModal(`<h2>GEMT</h2><p>Loggen er tilføjet til kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
+        showModal(`<h2>GEMT</h2><button class="btn-red" onclick="closeModal()">OK</button>`);
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
     };
 
-    window.deleteDraft = (index) => {
-        let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
-        drafts.splice(index, 1);
-        localStorage.setItem('rw_drafts', JSON.stringify(drafts));
-        renderDrafts();
-    };
-
-    function renderDrafts() {
+    window.renderDrafts = () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         el('btnSendAll').style.display = drafts.length ? 'block' : 'none';
-        el('draftList').innerHTML = drafts.length ? drafts.map((d, i) => `
+        el('draftList').innerHTML = drafts.map((d, i) => `
             <div class="list-item">
-                <button class="btn-delete" onclick="deleteDraft(${i})">SLET</button>
                 <strong>${d.headline}</strong>
                 <span class="info-line">${d.date} | Nr: ${d.workNr}</span>
-                <p>${d.body || 'Ingen beskrivelse...'}</p>
+                <span class="body-content">${d.body}</span>
             </div>
-        `).join('') : "<p style='text-align:center;'>Ingen kladder fundet.</p>";
-    }
+        `).join('') || "Ingen kladder.";
+    };
 
     el('btnSendAll').onclick = async () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
-        vib(100);
         try {
             for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
             const mailTo = localStorage.getItem('rw_mails') || "";
-            const body = drafts.map(d => `DATO: ${d.date}%0ANR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}`).join('%0A%0A');
-            window.location.href = `mailto:${mailTo}?subject=Logs&body=${body}`;
+            window.location.href = `mailto:${mailTo}?subject=Logs&body=Logs indsendt.`;
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-        } catch(e) { alert("Fejl: " + e.message); }
+        } catch(e) { alert(e.message); }
     };
 
     window.fetchHistory = async () => {
-        const selectedDate = el('historyDate').value;
-        if(!selectedDate) return;
-        el('historyList').innerHTML = "<p style='text-align:center;'>Henter fra skyen...</p>";
-        try {
-            const q = query(collection(db, "logs"), where("date", "==", selectedDate));
-            const querySnapshot = await getDocs(q);
-            if (querySnapshot.empty) {
-                el('historyList').innerHTML = "<p style='text-align:center;'>Ingen logs for denne dato.</p>";
-                return;
-            }
-            let html = "";
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                html += `
-                    <div class="list-item">
-                        <strong>${data.headline}</strong>
-                        <span class="info-line">Arbejdsnr: ${data.workNr}</span>
-                        <p>${data.body}</p>
-                    </div>`;
-            });
-            el('historyList').innerHTML = html;
-        } catch (e) { el('historyList').innerHTML = "<p>Fejl: " + e.message + "</p>"; }
+        const date = el('historyDate').value;
+        el('historyList').innerHTML = "Henter...";
+        const q = query(collection(db, "logs"), where("date", "==", date));
+        const snap = await getDocs(q);
+        let h = "";
+        snap.forEach(doc => {
+            const data = doc.data();
+            h += `<div class="list-item"><strong>${data.headline}</strong><span class="info-line">Nr: ${data.workNr}</span><span class="body-content">${data.body}</span></div>`;
+        });
+        el('historyList').innerHTML = h || "Ingen fundet.";
     };
 
     window.handleAdminOpen = () => {
         el('menuContent').style.display = 'none';
-        showModal(`<h2>ADMIN</h2><p>Kode:</p><input type="password" id="adminPwd"><button class="btn-red" id="authBtn">LOG IND</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
-        el('authBtn').onclick = () => {
-            if(el('adminPwd').value === "1234") {
-                const m = localStorage.getItem('rw_mails') || '';
-                showModal(`<h2>MAILS</h2><input type="text" id="mailSet" value="${m}"><button class="btn-red" id="saveSetBtn">GEM</button><button class="btn-secondary" onclick="closeModal()">LUK</button>`);
-                el('saveSetBtn').onclick = () => { localStorage.setItem('rw_mails', el('mailSet').value); vib(); closeModal(); };
-            }
-        };
+        showModal(`<h2>KODE</h2><input type="password" id="pw"><button class="btn-red" onclick="checkPw()">LOG IND</button>`);
     };
+
+    window.checkPw = () => {
+        if(el('pw').value === "1234") {
+            const m = localStorage.getItem('rw_mails') || '';
+            showModal(`<h2>MAIL</h2><input id="mSet" value="${m}"><button class="btn-red" onclick="saveM()">GEM</button>`);
+        }
+    };
+    window.saveM = () => { localStorage.setItem('rw_mails', el('mSet').value); closeModal(); };
 </script>
 </body>
 </html>
