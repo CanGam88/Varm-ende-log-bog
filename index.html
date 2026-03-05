@@ -5,276 +5,222 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>Log & Kladder — ROCKWOOL</title>
     
-    <link rel="manifest" href="manifest.json">
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-          .then(() => console.log("Service Worker registreret!"))
-          .catch(err => console.log("Service Worker fejl:", err));
-      }
-    </script>
-
     <style>
         :root{
           --rock-red:#D20014;
-          --dark-red:#9F000F;
           --bg:#f3f4f6;
           --card:#ffffff;
           --text:#111111;
-          --muted:#6b7280;
-          --tab-bg:#ffffff;
           --tab-border:#e5e7eb;
-          --tab-active-bg:#ffe4e8;
-          --tab-active-text:var(--dark-red);
-          --ok-bg:#E8F5E9;
-          --ok-color:#1B5E20;
-          --warn-bg:#FFF7ED;
-          --warn-color:#9A3412;
-          --modal-overlay: rgba(0,0,0,.45);
-          --preview-bg:#fafafa;
           --input-bg:#ffffff;
-          --input-text:#111827;
           --input-border:#d4d4d4;
         }
         body.dark{
           --bg:#0b1220; 
           --card:#111827;
           --text:#f9fafb;
-          --muted:#9ca3af;
-          --tab-bg:#111827;
           --tab-border:#243044;
-          --tab-active-bg:#ffffff;
-          --tab-active-text:var(--rock-red);
-          --modal-overlay: rgba(0,0,0,.6);
-          --preview-bg:#111827;
           --input-bg:#111827;
-          --input-text:#f9fafb;
           --input-border:#243044;
           color-scheme: dark;
         }
-        /* ... Resten af dit CSS er uændret ... */
-        html, body{
-          margin:0;
-          font-family:system-ui,Roboto,Arial;
-          background-color:var(--bg);
-          color:var(--text);
-          min-height:100%;
-        }
-        body{ min-height:100vh; transition: background-color 0.3s ease; }
-        header{
-          background:var(--rock-red);
-          color:#fff;
-          padding:14px;
-          position:sticky;
-          top:0;
-          z-index:1000;
-        }
-        header h1{margin:0;font-size:22px;line-height:1;}
+        html, body{ margin:0; font-family:system-ui,Roboto,Arial; background-color:var(--bg); color:var(--text); min-height:100%; }
+        body{ min-height:100vh; }
+        header{ background:var(--rock-red); color:#fff; padding:14px; position:sticky; top:0; z-index:1000; }
         main{ max-width:900px; margin:12px auto; padding:18px; position: relative; }
-        @media (max-width:520px){ main{ padding:12px; } header{ padding:12px; } header h1{ font-size:20px; } }
-        .card{
-          background-color:var(--card);
-          border-radius:12px;
-          padding:14px;
-          margin-bottom:12px;
-          box-shadow:0 1px 4px rgba(0,0,0,.10);
-          position: relative;
+        .card{ background-color:var(--card); border-radius:12px; padding:14px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,.10); }
+        .tabs{ display:flex; gap:8px; margin-bottom:12px; }
+        .tab{ border:1px solid var(--tab-border); background:var(--card); color:var(--text); padding:10px 14px; border-radius:999px; font-weight:800; cursor:pointer; }
+        .tab.active{ background:var(--rock-red); color:white; border-color:var(--rock-red); }
+        
+        /* Gør dato-feltet visuelt låst */
+        input[readonly] {
+            background-color: var(--bg);
+            cursor: not-allowed;
+            opacity: 0.8;
+            border-style: dashed;
         }
-        .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
-        .tab{
-          border:1px solid var(--tab-border);
-          background:var(--tab-bg);
-          color:var(--text);
-          padding:10px 14px;
-          border-radius:999px;
-          font-weight:800;
-          cursor:pointer;
-          min-height:44px;
-          flex:0 0 auto;
-        }
-        .tab.active{
-          background:var(--tab-active-bg);
-          border-color:var(--rock-red);
-          color:var(--tab-active-text);
-        }
-        .menu-container {
-          position: absolute;
-          top: 18px;
-          right: 18px;
-          z-index: 100;
-        }
-        .menu-btn {
-          background: transparent;
-          color: var(--rock-red);
-          border: 2px solid var(--rock-red);
-          padding: 8px 16px;
-          border-radius: 8px;
-          font-weight: 800;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          text-transform: uppercase;
-          font-size: 14px;
-        }
-        .dropdown-content {
-          display: none;
-          position: absolute;
-          right: 0;
-          top: 100%;
-          background-color: var(--card);
-          min-width: 160px;
-          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-          border-radius: 8px;
-          margin-top: 5px;
-          border: 1px solid var(--tab-border);
-          overflow: hidden;
-        }
+        /* Skjul kalender-ikon i de fleste browsere */
+        input::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
+
+        input, textarea { width:100%; padding:12px; border:1px solid var(--input-border); border-radius:12px; margin-top:8px; font:inherit; background-color:var(--input-bg); color:var(--text); box-sizing:border-box; }
+        textarea{ min-height:150px; }
+        button{ background:var(--rock-red); color:#fff; border:0; padding:12px 14px; border-radius:12px; cursor:pointer; font-weight:800; margin-top:10px; }
+        .menu-container { position: absolute; top: 18px; right: 18px; z-index: 100; }
+        .dropdown-content { display: none; position: absolute; right: 0; background: var(--card); border: 1px solid var(--tab-border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 150px; }
         .show { display: block !important; }
-        input,textarea{
-          width:100%;
-          padding:12px;
-          border:1px solid var(--input-border);
-          border-radius:12px;
-          margin-top:8px;
-          font:inherit;
-          background-color:var(--input-bg);
-          color:var(--input-text);
-          box-sizing:border-box;
-        }
-        textarea{ min-height:180px; }
-        .row{ display:flex; gap:12px; flex-wrap:wrap; }
-        .col{ flex:1; min-width:220px; }
-        button{
-          background:var(--rock-red);
-          color:#fff;
-          border:0;
-          padding:12px 14px;
-          border-radius:12px;
-          cursor:pointer;
-          font-weight:800;
-        }
-        .list{
-          margin-top:10px;
-          border:1px solid var(--tab-border);
-          border-radius:12px;
-          overflow:hidden;
-          background:var(--card);
-        }
-        .list-row{
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          padding:12px;
-          border-bottom:1px solid var(--tab-border);
-          cursor:pointer;
-        }
-        .preview{
-          margin-top:12px;
-          border:1px solid var(--tab-border);
-          border-radius:12px;
-          padding:12px;
-          background:var(--preview-bg);
-          white-space:pre-wrap;
-        }
-        .modal-overlay{
-          display:none;
-          position:fixed;
-          inset:0;
-          background:var(--modal-overlay);
-          z-index:2000;
-          padding:14px;
-        }
-        .recipient-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-top: 10px;
-          padding: 8px;
-          border: 1px solid var(--tab-border);
-          border-radius: 12px;
-          background: var(--preview-bg);
-        }
-        .recipient-tag {
-          background: var(--rock-red);
-          color: white;
-          padding: 4px 10px;
-          border-radius: 999px;
-          font-size: 13px;
-        }
+        .list-row { padding: 12px; border-bottom: 1px solid var(--tab-border); cursor: pointer; }
+        .preview { background: var(--bg); padding: 12px; border-radius: 8px; margin-top: 10px; white-space: pre-wrap; font-size: 14px; }
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; padding:20px; }
     </style>
 </head>
 <body>
+
 <header>
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
         <h1>Log</h1>
-        <div style="font-weight:800;font-size:18px;line-height:1;">ROCKWOOL</div>
+        <div style="font-weight:800;">ROCKWOOL</div>
     </div>
 </header>
+
 <main>
     <div class="menu-container">
-        <button id="menuBtn" class="menu-btn" type="button">Menu</button>
+        <button id="menuBtn" style="background:transparent; color:white; border:1px solid white; padding:5px 10px; border-radius:6px; cursor:pointer;">Menu</button>
         <div id="menuDropdown" class="dropdown-content">
-            <button id="btnTheme" type="button">Skift tema</button>
-            <button id="btnOpenSettings" type="button">Indstillinger</button>
+            <button id="btnTheme" style="width:100%; background:none; color:var(--text); text-align:left; padding:12px; border:0; border-bottom:1px solid var(--tab-border); cursor:pointer;">Skift tema</button>
+            <button id="btnOpenSettings" style="width:100%; background:none; color:var(--text); text-align:left; padding:12px; border:0; cursor:pointer;">Indstillinger</button>
         </div>
     </div>
 
     <div class="tabs">
-        <button id="tabNew" class="tab active" type="button">Ny log</button>
-        <button id="tabDrafts" class="tab" type="button">Kladder</button>
-        <button id="tabHistory" class="tab" type="button">Historik</button>
+        <button id="tabNew" class="tab active">Ny log</button>
+        <button id="tabDrafts" class="tab">Kladder</button>
+        <button id="tabHistory" class="tab">Historik</button>
     </div>
 
     <section id="pageNew" class="card">
-        <div class="row">
-            <div class="col" style="max-width:240px">
-                <label>Dato</label>
-                <input id="logDate" type="date" readonly/>
-            </div>
-            <div class="col">
-                <label>Arbejdsnummer (5 cifre)</label>
-                <input id="workNr" type="text" maxlength="5" placeholder="fx 01234"/>
-            </div>
-        </div>
-        <div style="margin-top:12px">
-            <label>Overskrift</label>
-            <input id="headline" type="text" placeholder="Skriv en kort overskrift..."/>
-        </div>
-        <div style="margin-top:12px">
-            <label>Log-beskrivelse</label>
-            <textarea id="bodyText" placeholder="Beskriv hændelsen..."></textarea>
-        </div>
-        <div style="margin-top:14px;display:flex;justify-content:flex-end;">
-            <button id="btnSave" type="button">Gem</button>
-        </div>
+        <label>Dato (Låst til i dag)</label>
+        <input id="logDate" type="date" readonly tabindex="-1" />
+        
+        <label style="display:block; margin-top:15px;">Arbejdsnummer (5 cifre)</label>
+        <input id="workNr" type="text" maxlength="5" placeholder="fx 01234"/>
+        
+        <label style="display:block; margin-top:15px;">Overskrift</label>
+        <input id="headline" type="text" placeholder="Kort overskrift..."/>
+        
+        <label style="display:block; margin-top:15px;">Beskrivelse</label>
+        <textarea id="bodyText" placeholder="Beskriv hændelsen..."></textarea>
+        
+        <button id="btnSave" style="width:100%;">Gem i kladder</button>
     </section>
 
     <section id="pageDrafts" class="card" style="display:none">
-        <div id="draftList" class="list"></div>
-        <div id="draftPreview" class="preview">Vælg en kladde fra listen.</div>
-        <button id="btnSendAll" type="button" style="margin-top:10px; width:100%">Send alle kladder</button>
+        <h3>Gemte kladder</h3>
+        <div id="draftList"></div>
+        <div id="draftPreview" class="preview">Vælg en kladde for at se indhold.</div>
+        <button id="btnSendAll" style="width:100%; background:#2e7d32; margin-top:20px;">Send alle (Firebase & Mail)</button>
     </section>
 
     <section id="pageHistory" class="card" style="display:none">
-        <input id="historyDatePicker" type="date" style="max-width:200px; margin-bottom:10px;"/>
-        <div id="historyList" class="list"></div>
-        <div id="historyPreview" class="preview">Vælg en post.</div>
+        <h3>Historik</h3>
+        <p class="small">Vælg dato for at se tidligere indsendte logs.</p>
+        <input id="historyDatePicker" type="date" />
+        <div id="historyList"></div>
     </section>
 </main>
 
 <div id="settingsModal" class="modal-overlay">
-    <div class="card" style="max-width:500px; margin:50px auto;">
+    <div class="card" style="max-width:400px; margin: 100px auto;">
         <h3>Indstillinger</h3>
-        <input id="settingsRecipients" type="text" placeholder="Tilføj mail..."/>
-        <div id="tagContainer" class="recipient-tags"></div>
-        <button id="btnCloseSettings" type="button" style="margin-top:10px">Luk</button>
+        <label>Modtager e-mails (komma-separeret)</label>
+        <input id="settingsRecipients" type="text" placeholder="navn@rockwool.com, chef@rockwool.com" />
+        <button id="btnCloseSettings" style="width:100%;">Gem og luk</button>
     </div>
 </div>
 
 <script type="module">
-    // ... Din eksisterende Firebase og JavaScript logik her ...
-    // (Jeg har forkortet den her for overskuelighed, men du beholder bare din egen)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDBwdvNeqXGTBKSnrejyxv1rWwPLtcgXuw",
+      authDomain: "logbog---lasse-gamborg.firebaseapp.com",
+      projectId: "logbog---lasse-gamborg",
+      storageBucket: "logbog---lasse-gamborg.firebasestorage.app",
+      messagingSenderId: "501888216233",
+      appId: "1:501888216233:web:980b74fb985a96e6370db8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const el = (id) => document.getElementById(id);
+    const getToday = () => new Date().toISOString().split('T')[0];
+
+    // Lås datoen til i dag ved opstart
+    el('logDate').value = getToday();
+
+    // Navigation
+    function showPage(pageId, tabId) {
+        ['pageNew', 'pageDrafts', 'pageHistory'].forEach(p => el(p).style.display = 'none');
+        ['tabNew', 'tabDrafts', 'tabHistory'].forEach(t => el(t).classList.remove('active'));
+        el(pageId).style.display = 'block';
+        el(tabId).classList.add('active');
+        if(pageId === 'pageNew') el('logDate').value = getToday(); // Opdater dato når man går til "Ny log"
+    }
+
+    el('tabNew').onclick = () => showPage('pageNew', 'tabNew');
+    el('tabDrafts').onclick = () => { showPage('pageDrafts', 'tabDrafts'); renderDrafts(); };
+    el('tabHistory').onclick = () => showPage('pageHistory', 'tabHistory');
+
+    // Menu & Tema
+    el('menuBtn').onclick = (e) => { e.stopPropagation(); el('menuDropdown').classList.toggle('show'); };
+    window.onclick = () => el('menuDropdown').classList.remove('show');
+    el('btnTheme').onclick = () => document.body.classList.toggle('dark');
+    el('btnOpenSettings').onclick = () => { el('settingsModal').style.display = 'block'; el('settingsRecipients').value = localStorage.getItem('rw_mails') || ''; };
+    el('btnCloseSettings').onclick = () => { localStorage.setItem('rw_mails', el('settingsRecipients').value); el('settingsModal').style.display = 'none'; };
+
+    // Kladde Logik
+    el('btnSave').onclick = () => {
+        const draft = {
+            date: el('logDate').value,
+            workNr: el('workNr').value,
+            headline: el('headline').value,
+            body: el('bodyText').value,
+            timestamp: Date.now()
+        };
+        if(!draft.workNr || !draft.headline) return alert("Udfyld venligst arbejdsnummer og overskrift");
+        
+        let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        drafts.push(draft);
+        localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        
+        alert("Log gemt i kladder!");
+        el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
+    };
+
+    function renderDrafts() {
+        const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        if(drafts.length === 0) {
+            el('draftList').innerHTML = "<p class='small'>Ingen kladder gemt.</p>";
+            return;
+        }
+        el('draftList').innerHTML = drafts.map((d, i) => `
+            <div class="list-row" onclick="el('draftPreview').innerText = \`${d.body}\`" style="border-left: 4px solid var(--rock-red); margin-top:5px; background:rgba(0,0,0,0.02)">
+                <strong>${d.headline}</strong><br>
+                <small>${d.date} | Arbejdsnr: ${d.workNr}</small>
+            </div>
+        `).join('');
+    }
+
+    // Send alle kladder
+    el('btnSendAll').onclick = async () => {
+        const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        if(drafts.length === 0) return alert("Ingen kladder at sende.");
+
+        if(!confirm(`Vil du sende ${drafts.length} logs til databasen og rydde kladderne?`)) return;
+
+        try {
+            for (const d of drafts) {
+                await addDoc(collection(db, "logs"), {
+                    ...d,
+                    sentAt: serverTimestamp()
+                });
+            }
+            
+            const mailTo = localStorage.getItem('rw_mails') || "";
+            const mailBody = drafts.map(d => `DATO: ${d.date}%0ANR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}%0A%0A`).join('%0A');
+            
+            window.location.href = `mailto:${mailTo}?subject=Rockwool Log Rapport&body=${mailBody}`;
+            
+            localStorage.setItem('rw_drafts', '[]');
+            renderDrafts();
+            el('draftPreview').innerText = "Vælg en kladde for at se indhold.";
+            alert("Logs er sendt og arkiveret!");
+        } catch (e) {
+            alert("Fejl under afsendelse: " + e.message);
+        }
+    };
 </script>
 
 </body>
