@@ -26,17 +26,14 @@
             --input-bg: #1a1c26;
         }
 
-        /* --- FINAL CALENDAR ICON FIX --- */
+        /* --- KALENDER IKON FIX --- */
         input[type="date"] {
             color-scheme: dark !important;
             color: var(--text-main) !important;
-            position: relative;
         }
         
-        /* Dette tvinger et hvidt ikon ind via baggrunden, hvis browseren driller */
         body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1) brightness(100%) !important;
-            opacity: 1 !important;
             cursor: pointer;
         }
 
@@ -75,7 +72,7 @@
 
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; text-transform: uppercase; }
         
-        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(128,128,128,0.05); border-radius: 8px; text-align: left; position: relative; }
+        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(128,128,128,0.05); border-radius: 8px; text-align: left; }
         .list-item strong { font-size: 18px; color: var(--rock-red); display: block; margin-bottom: 5px; }
         .list-item .info-line { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 10px; }
         .list-item .body-content { color: var(--text-main) !important; font-size: 15px; white-space: pre-wrap; display: block; padding: 10px; background: rgba(0,0,0,0.1); border-radius: 4px; }
@@ -111,7 +108,7 @@
             <label>Dato (Låst)</label>
             <input id="logDate" type="date" readonly />
             <label>Arbejdsnummer</label>
-            <input id="workNr" type="text" maxlength="5" placeholder="fx 41045"/>
+            <input id="workNr" type="text" maxlength="5" placeholder="Indtast 5 cifre"/>
             <label>Overskrift</label>
             <input id="headline" type="text" placeholder="Titel..."/>
             <label>Beskrivelse</label>
@@ -185,7 +182,7 @@
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
-        showModal(`<h2>GEMT</h2><p>Loggen ligger nu i kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
+        showModal(`<h2>GEMT</h2><p>Ligger i kladder.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
     };
 
@@ -196,9 +193,9 @@
             <div class="list-item">
                 <strong>${d.headline}</strong>
                 <span class="info-line">${d.date} | Nr: ${d.workNr}</span>
-                <span class="body-content">${d.body || 'Ingen beskrivelse'}</span>
+                <span class="body-content">${d.body || 'Ingen tekst'}</span>
             </div>
-        `).join('') || "<p style='text-align:center'>Ingen kladder fundet.</p>";
+        `).join('') || "<p style='text-align:center'>Ingen kladder</p>";
     };
 
     el('btnSendAll').onclick = async () => {
@@ -214,41 +211,33 @@
                 }); 
             }
             const mailTo = localStorage.getItem('rw_mails') || "";
-            const mailBody = drafts.map(d => `DATO: ${d.date}%0ANR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}`).join('%0A%0A');
-            window.location.href = `mailto:${mailTo}?subject=Nye Logs&body=${mailBody}`;
+            const mailBody = drafts.map(d => `NR: ${d.workNr}%0AEMNE: ${d.headline}%0A---%0A${d.body}`).join('%0A%0A');
+            window.location.href = `mailto:${mailTo}?subject=Logs&body=${mailBody}`;
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-            showModal(`<h2>SUCCES</h2><p>Logs er arkiveret i skyen.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
+            showModal(`<h2>SUCCES</h2><p>Logs arkiveret i skyen.</p><button class="btn-red" onclick="closeModal()">OK</button>`);
         } catch(e) { alert("Fejl: " + e.message); }
     };
 
-    // --- OPDATERET HISTORIK SØGNING ---
     window.fetchHistory = async () => {
-        const selectedDate = el('historyDate').value; // format: YYYY-MM-DD
-        if(!selectedDate) return;
-        
-        el('historyList').innerHTML = "<p style='text-align:center'>Henter fra skyen...</p>";
-        
+        const selDate = el('historyDate').value;
+        if(!selDate) return;
+        el('historyList').innerHTML = "<p style='text-align:center'>Henter...</p>";
         try {
-            // Vi søger efter logs hvor datoen matcher det valgte
-            const q = query(collection(db, "logs"), where("date", "==", selectedDate));
+            const q = query(collection(db, "logs"), where("date", "==", selDate));
             const snap = await getDocs(q);
-            
             let h = "";
             snap.forEach(doc => {
                 const data = doc.data();
                 h += `
                 <div class="list-item">
                     <strong>${data.headline}</strong>
-                    <span class="info-line">Arbejdsnr: ${data.workNr}</span>
-                    <span class="body-content">${data.body || 'Ingen beskrivelse'}</span>
+                    <span class="info-line">Nr: ${data.workNr}</span>
+                    <span class="body-content">${data.body || ''}</span>
                 </div>`;
             });
-            
-            el('historyList').innerHTML = h || "<p style='text-align:center'>Ingen logs fundet for denne dato.<br><small>(Prøv evt. at vælge datoen igen)</small></p>";
-        } catch(e) {
-            el('historyList').innerHTML = `<p style="color:red">Søgefejl: ${e.message}</p>`;
-        }
+            el('historyList').innerHTML = h || "<p style='text-align:center'>Ingen logs fundet.</p>";
+        } catch(e) { el('historyList').innerHTML = "Fejl: " + e.message; }
     };
 
     window.handleAdminOpen = () => {
@@ -259,8 +248,8 @@
     window.checkPw = () => {
         if(el('pw').value === "1234") {
             const m = localStorage.getItem('rw_mails') || '';
-            showModal(`<h2>MAIL-OPSÆTNING</h2><input id="mSet" value="${m}" placeholder="mail1, mail2..."><button class="btn-red" onclick="saveM()">GEM</button>`);
-        } else { alert("Forkert kode"); }
+            showModal(`<h2>MAIL</h2><input id="mSet" value="${m}"><button class="btn-red" onclick="saveM()">GEM</button>`);
+        }
     };
     window.saveM = () => { localStorage.setItem('rw_mails', el('mSet').value); closeModal(); };
 </script>
