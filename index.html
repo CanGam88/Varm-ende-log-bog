@@ -293,14 +293,31 @@
 
     window.generatePDF = () => {
         const element = el('historyList');
-        const isDark = document.body.classList.contains('dark-mode');
+        
         const opt = { 
             margin: 10, 
             filename: `Log-${el('historyDate').value}.pdf`, 
-            html2canvas: { scale: 2, backgroundColor: isDark ? '#1a1c26' : '#ffffff' }, 
+            html2canvas: { scale: 2, backgroundColor: '#ffffff' }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         };
-        html2pdf().set(opt).from(element).save();
+
+        // Gemmer originale styles
+        const originalCards = element.querySelectorAll('.card');
+        const styles = [];
+        
+        originalCards.forEach(c => {
+            styles.push({ bg: c.style.backgroundColor, color: c.style.color });
+            c.style.backgroundColor = '#ffffff';
+            c.style.color = '#1a1a1a';
+        });
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            // Genskaber temaet efter eksport
+            originalCards.forEach((c, i) => {
+                c.style.backgroundColor = styles[i].bg;
+                c.style.color = styles[i].color;
+            });
+        });
     };
 
     window.handleAdminOpen = () => {
