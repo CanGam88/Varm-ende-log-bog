@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Log & Kladder — ROCKWOOL</title>
+<style>
+    :root{
+      --rock-red:#D20014;
+      --dark-red:#9F000F;
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --text:#111111;
+      --muted:#6b7280;
+      --tab-bg:#ffffff;
+      --tab-border:#e5e7eb;
+      --tab-active-bg:#ffe4e8;
+      --tab-active-text:var(--dark-red);
+      --ok-bg:#E8F5E9;
+      --ok-color:#1B5E20;
+      --warn-bg:#FFF7ED;
+      --warn-color:#9A3412;
+      --modal-overlay: rgba(0,0,0,.45);
+      --preview-bg:#fafafa;
+      --input-bg:#ffffff;
+      --input-text:#111827;
+      --input-border:#d4d4d4;
+    }
+    body.dark{
+      /* Byttet om på farverne for bedre kontrast */
+      --bg:#0b1220; 
+      --card:#111827;
+      --text:#f9fafb;
+      --muted:#9ca3af;
+      --tab-bg:#111827;
+      --tab-border:#243044;
+      --tab-active-bg:#ffffff;
+      --tab-active-text:var(--rock-red);
+      --modal-overlay: rgba(0,0,0,.6);
+      --preview-bg:#111827;
+      --input-bg:#111827;
+      --input-text:#f9fafb;
+      --input-border:#243044;
+ 
+      /* Sikrer at kalender-ikonet bliver hvidt i mørkt tema */
+      color-scheme: dark;
+    }
+    html, body{
+      margin:0;
+      font-family:system-ui,Roboto,Arial;
+      background-color:var(--bg);
+      color:var(--text);
+      min-height:100%;
+    }
+    body{ min-height:100vh; transition: background-color 0.3s ease; }
+    header{
+      background:var(--rock-red);
+      color:#fff;
+      padding:14px;
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
+    header h1{margin:0;font-size:22px;line-height:1;}
+    main{ max-width:900px; margin:12px auto; padding:18px; position: relative; }
+    @media (max-width:520px){ main{ padding:12px; } header{ padding:12px; } header h1{ font-size:20px; } }
+    .card{
+      background-color:var(--card);
+      border-radius:12px;
+      padding:14px;
+      margin-bottom:12px;
+      box-shadow:0 1px 4px rgba(0,0,0,.10);
+      position: relative;
+    }
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .tab{
+      border:1px solid var(--tab-border);
+      background:var(--tab-bg);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+      cursor:pointer;
+      min-height:44px;
+      flex:0 0 auto;
+    }
+    @media (max-width:520px){ .tab{ flex:1 1 auto; text-align:center; } }
+    .tab.active{
+      background:var(--tab-active-bg);
+      border-color:var(--rock-red);
+      color:var(--tab-active-text);
+    }
+    .menu-container {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 100;
+    }
+    .menu-btn {
+      background: transparent;
+      color: var(--rock-red);
+      border: 2px solid var(--rock-red);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    .menu-btn:after {
+      content: ' ▼';
+      font-size: 10px;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: var(--card);
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      margin-top: 5px;
+      border: 1px solid var(--tab-border);
+      overflow: hidden;
+    }
+    .dropdown-content button {
+      background: transparent;
+      color: var(--text);
+      width: 100%;
+      text-align: left;
+      border: none;
+      border-radius: 0;
+      padding: 12px 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 13px;
+      border-bottom: 1px solid var(--tab-border);
+    }
+    .dropdown-content button:last-child { border-bottom: none; }
+    .dropdown-content button:hover {
+      background-color: var(--tab-active-bg);
+      color: var(--rock-red);
+    }
+    .show { display: block !important; }
+    label{ font-weight:800; }
+    input,textarea{
+      width:100%;
+      padding:12px;
+      border:1px solid var(--input-border);
+      border-radius:12px;
+      margin-top:8px;
+      font:inherit;
+      background-color:var(--input-bg);
+      color:var(--input-text);
+      box-sizing:border-box;
+      min-height:44px;
+    }
+    textarea{ min-height:180px; }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; }
+    .col{ flex:1; min-width:220px; }
+    button{
+      background:var(--rock-red);
+      color:#fff;
+      border:0;
+      padding:12px 14px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:800;
+      min-height:44px;
+    }
+    button:disabled{ opacity:.5; cursor:not-allowed; }
+    .small{ font-size:13px; color:var(--muted); }
+    .helper{ font-size:13px; color:#b12727; margin-top:6px; }
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      background:#eef2ff;
+      color:#1e3a8a;
+      white-space:nowrap;
+    }
+    .pill.ok{ background:var(--ok-bg); color:var(--ok-color); }
+    .pill.warn{ background:var(--warn-bg); color:var(--warn-color); }
+    .split{ display:grid; grid-template-columns:1fr 1.2fr; gap:12px; }
+    @media (max-width:860px){ .split{ grid-template-columns:1fr; } }
+    .list{
+      margin-top:10px;
+      border:1px solid var(--tab-border);
+      border-radius:12px;
+      overflow:hidden;
+      background:var(--card);
+      min-height:80px;
+    }
+    .list-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 12px;
+      border-bottom:1px solid var(--tab-border);
+      cursor:pointer;
+      background:transparent;
+    }
+    .list-row:hover{ background:rgba(0,0,0,.03); }
+    body.dark .list-row:hover{ background:rgba(255,255,255,.04); }
+    .list-row.active{
+      background:rgba(210,0,20,.10);
+      outline:2px solid rgba(210,0,20,.25);
+      outline-offset:-2px;
+    }
+    .list-row:last-child{ border-bottom:none; }
+ 
+    .btn-delete {
+      background: transparent;
+      color: var(--rock-red);
+      border: 1px solid var(--rock-red);
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .btn-delete:hover {
+      background: var(--rock-red);
+      color: white;
+    }
+    .preview{
+      margin-top:12px;
+      border:1px solid var(--tab-border);
+      border-radius:12px;
+      padding:12px;
+      background:var(--preview-bg);
+      white-space:pre-wrap;
+      line-height:1.35;
+      min-height:140px;
+    }
+    .modal-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:var(--modal-overlay);
+      z-index:2000;
+      padding:14px;
+      overflow:auto;
+    }
+    .infoBox{
+      margin-top:12px;
+      border:1px solid var(--tab-border);
+      border-radius:12px;
+      padding:12px;
+      background:transparent;
+    }
+    .recipient-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 8px;
+      border: 1px solid var(--tab-border);
+      border-radius: 12px;
+      background: var(--preview-bg);
+      min-height: 40px;
+    }
+    .recipient-tag {
+      background: var(--rock-red);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .remove-tag { cursor: pointer; font-weight: 900; }
+    footer{ color:var(--muted); text-align:center; margin:20px 0; padding:0 12px; }
+</style>
+</head>
+<body>
+<header>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+<h1>Log</h1>
+<div style="font-weight:800;font-size:18px;line-height:1;">ROCKWOOL</div>
+</div>
+</header>
+<main>
+<div class="menu-container">
+<button id="menuBtn" class="menu-btn" type="button">Menu</button>
+<div id="menuDropdown" class="dropdown-content">
+<button id="btnTheme" type="button">Skift tema</button>
+<button id="btnOpenSettings" type="button">Indstillinger</button>
+</div>
+</div>
+ 
+    <div class="tabs">
+<button id="tabNew" class="tab active" type="button">Ny log</button>
+<button id="tabDrafts" class="tab" type="button">Kladder</button>
+<button id="tabHistory" class="tab" type="button">Historik</button>
+</div>
+<section id="pageNew" class="card">
+<div style="margin-bottom: 20px;">
+<div style="font-weight:900; font-size: 18px;">Ny log</div>
+<div class="small">Skriv og tryk Gem for at lægge i kladder.</div>
+<div id="settingsLockHint" class="small" style="color: var(--rock-red); margin-top: 4px;"></div>
+</div>
+<div class="row">
+<div class="col" style="max-width:240px">
+<label>Dato</label>
+<input id="logDate" type="date" readonly/>
+</div>
+<div class="col">
+<label>Arbejdsnummer (5 cifre)</label>
+<input id="workNr" type="text" maxlength="5" placeholder="fx 01234"/>
+<div id="workHelp" class="helper" style="display:none">Arbejdsnummer skal være præcis 5 cifre (0‑9).</div>
+<div id="workRequired" class="helper" style="display:none">Arbejdsnummer skal udfyldes.</div>
+</div>
+</div>
+<div style="margin-top:12px">
+<label>Overskrift</label>
+<input id="headline" type="text" placeholder="Skriv en kort overskrift..."/>
+<div id="headlineRequired" class="helper" style="display:none">Overskrift skal udfyldes.</div>
+</div>
+<div style="margin-top:12px">
+<label>Log-beskrivelse</label>
+<textarea id="bodyText" placeholder="Beskriv hændelsen..."></textarea>
+</div>
+<div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap">
+<button id="btnSave" type="button">Gem</button>
+<div style="flex:1 1 100%;text-align:right">
+<div id="saveStatus" class="pill warn" style="display:none"></div>
+<div id="saveTime" class="small" style="margin-top:6px"></div>
+</div>
+</div>
+</section>
+<section id="pageDrafts" class="card" style="display:none">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+<div>
+<div style="font-weight:900; font-size: 18px;">Kladder</div>
+<div class="small">Sender til e-mail og arkiverer i Firebase.</div>
+</div>
+<div style="text-align:right">
+<div id="draftStatus" class="pill warn">0 kladder</div>
+<div id="draftHint" class="small" style="margin-top:6px"></div>
+</div>
+</div>
+<div class="split" style="margin-top:12px">
+<div>
+<div style="font-weight:900">Liste</div>
+<div id="draftList" class="list"></div>
+<div id="draftEmptyBox" class="emptyBox" style="text-align: center; padding: 20px; border: 1px dashed var(--tab-border); border-radius: 12px; margin-top: 10px;">
+<div class="txt small" id="emptyText">Ingen kladder endnu.</div>
+<button id="btnSendAll" type="button" style="margin-top: 10px;">Send</button>
+<div id="uploadStatus" class="small" style="color: var(--rock-red); margin-top: 8px; display: none;">Uploader til database...</div>
+</div>
+</div>
+<div>
+<div style="font-weight:900">Valgt kladde</div>
+<div id="draftPreview" class="preview">Vælg en kladde fra listen.</div>
+</div>
+</div>
+</section>
+ 
+    <section id="pageHistory" class="card" style="display:none">
+<div style="margin-bottom: 20px;">
+<div style="font-weight:900; font-size: 18px;">Historik</div>
+<div class="small">Kun logs der er blevet "Sendt" fremgår her.</div>
+</div>
+ 
+        <div style="max-width: 300px; margin-bottom: 20px;">
+<label>Vælg dato</label>
+<input id="historyDatePicker" type="date" />
+</div>
+ 
+        <div class="split">
+<div>
+<div style="font-weight:900">Database poster</div>
+<div id="historyList" class="list"></div>
+</div>
+<div>
+<div style="font-weight:900">Visning</div>
+<div id="historyPreview" class="preview">Vælg en dato og en kladde.</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="small">App lavet af Lasse Gamborg</footer>
+<div id="settingsModal" class="modal-overlay">
+<div class="card" style="max-width:760px; margin:8vh auto; padding:14px;">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<div style="font-weight:900">Indstillinger</div>
+<button id="btnCloseSettings" type="button" style="background: transparent; color: var(--rock-red); border: 1px solid var(--rock-red);">Luk</button>
+</div>
+<div style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<label>Tilføj modtager</label>
+<div id="lockStateBadge" class="pill warn">🔓 Ulåst</div>
+</div>
+<input id="settingsRecipients" type="text" placeholder="Skriv mail og tryk komma..."/>
+<div id="tagContainer" class="recipient-tags"></div>
+</div>
+<div class="infoBox">
+<div style="font-weight:900">Lås/oplås med kode</div>
+<div class="row" style="margin-top:10px">
+<div class="col">
+<label>Kode</label>
+<input id="lockCodeInput" type="password" placeholder="Indtast kode..."/>
+<div class="small" id="lockCodeHint" style="margin-top: 6px;"></div>
+</div>
+<div class="col" style="display:flex;align-items:flex-end;gap:8px;">
+<button id="btnToggleLock" type="button" style="background: transparent; color: var(--rock-red); border: 1px solid var(--rock-red);">Lås</button>
+<button id="btnSetOrChangeCode" type="button" style="background: transparent; color: var(--rock-red); border: 1px solid var(--rock-red);">Sæt/ændr kode</button>
+</div>
+</div>
+</div>
+<div style="margin-top:12px;display:flex;gap:10px;justify-content:flex-end">
+<button id="btnSaveSettings" type="button">Færdig</button>
+<button id="btnClearRecipients" type="button" style="background: transparent; color: var(--rock-red); border: 1px solid var(--rock-red);">Ryd alle</button>
+</div>
+</div>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+ 
+    const firebaseConfig = {
+      apiKey: "AIzaSyDBwdvNeqXGTBKSnrejyxv1rWwPLtcgXuw",
+      authDomain: "logbog---lasse-gamborg.firebaseapp.com",
+      projectId: "logbog---lasse-gamborg",
+      storageBucket: "logbog---lasse-gamborg.firebasestorage.app",
+      messagingSenderId: "501888216233",
+      appId: "1:501888216233:web:980b74fb985a96e6370db8"
+    };
+ 
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+ 
+    'use strict';
+    const STORAGE_KEYS = {
+      drafts: 'rw_log_drafts_v4',
+      recipients: 'rw_log_recipients_v2',
+      recipientsLocked: 'rw_log_recipients_locked_v2',
+      lockCode: 'rw_log_recipients_lockcode_v1',
+      theme: 'rw_log_theme_v1'
+    };
+    function el(id){ return document.getElementById(id); }
+    const els = {
+      tabNew: el('tabNew'),
+      tabDrafts: el('tabDrafts'),
+      tabHistory: el('tabHistory'),
+      pageNew: el('pageNew'),
+      pageDrafts: el('pageDrafts'),
+      pageHistory: el('pageHistory'),
+      logDate: el('logDate'),
+      workNr: el('workNr'),
+      headline: el('headline'),
+      bodyText: el('bodyText'),
+      workHelp: el('workHelp'),
+      workRequired: el('workRequired'),
+      headlineRequired: el('headlineRequired'),
+      btnSave: el('btnSave'),
+      saveStatus: el('saveStatus'),
+      saveTime: el('saveTime'),
+      draftStatus: el('draftStatus'),
+      draftHint: el('draftHint'),
+      draftList: el('draftList'),
+      draftPreview: el('draftPreview'),
+      btnSendAll: el('btnSendAll'),
+      btnTheme: el('btnTheme'),
+      btnOpenSettings: el('btnOpenSettings'),
+      settingsModal: el('settingsModal'),
+      btnCloseSettings: el('btnCloseSettings'),
+      settingsRecipients: el('settingsRecipients'),
+      tagContainer: el('tagContainer'),
+      lockStateBadge: el('lockStateBadge'),
+      lockCodeInput: el('lockCodeInput'),
+      lockCodeHint: el('lockCodeHint'),
+      btnToggleLock: el('btnToggleLock'),
+      btnSetOrChangeCode: el('btnSetOrChangeCode'),
+      btnSaveSettings: el('btnSaveSettings'),
+      btnClearRecipients: el('btnClearRecipients'),
+      menuBtn: el('menuBtn'),
+      menuDropdown: el('menuDropdown'),
+      settingsLockHint: el('settingsLockHint'),
+      emptyText: el('emptyText'),
+      uploadStatus: el('uploadStatus'),
+      historyDatePicker: el('historyDatePicker'),
+      historyList: el('historyList'),
+      historyPreview: el('historyPreview')
+    };
+    let selectedDraftId = null;
+    els.menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        els.menuDropdown.classList.toggle('show');
+    });
+    window.addEventListener('click', () => {
+        els.menuDropdown.classList.remove('show');
+    });
+    function uuid(){ return 'd_' + Math.random().toString(16).slice(2) + '_' + Date.now().toString(16); }
+    function todayISO(){
+      const d=new Date();
+      return d.toISOString().split('T')[0];
+    }
+    function sanitizeWorkNr(){
+      els.workHelp.style.display='none';
+      els.workRequired.style.display='none';
+      els.workNr.value = els.workNr.value.replace(/[^\d]/g,'').slice(0,5);
+    }
+    function validateInputs(){
+      const work = els.workNr.value.trim();
+      const head = els.headline.value.trim();
+      if(!work){ els.workRequired.style.display='block'; return false; }
+      if(!/^\d{5}$/.test(work)){ els.workHelp.style.display='block'; return false; }
+      if(!head){ els.headlineRequired.style.display='block'; return false; }
+      return true;
+    }
+    function readDrafts(){
+      const raw = localStorage.getItem(STORAGE_KEYS.drafts);
+      return raw ? JSON.parse(raw) : [];
+    }
+    function writeDrafts(arr){ localStorage.setItem(STORAGE_KEYS.drafts, JSON.stringify(arr)); }
+    function getRecipientsSetting(){ return (localStorage.getItem(STORAGE_KEYS.recipients) || '').trim(); }
+    function setRecipientsSetting(v){
+      localStorage.setItem(STORAGE_KEYS.recipients, v || '');
+      renderTags();
+    }
+    function isRecipientsLocked(){ return localStorage.getItem(STORAGE_KEYS.recipientsLocked) === '1'; }
+    function setRecipientsLocked(v){ localStorage.setItem(STORAGE_KEYS.recipientsLocked, v ? '1' : '0'); }
+    function hasLockCode(){ return !!localStorage.getItem(STORAGE_KEYS.lockCode); }
+    function applyTheme(mode){
+      document.body.classList.toggle('dark', mode === 'dark');
+      localStorage.setItem(STORAGE_KEYS.theme, mode);
+    }
+    function toggleTheme(){
+      const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+    function renderTags() {
+      const locked = isRecipientsLocked();
+      els.tagContainer.style.display = locked ? 'none' : 'flex';
+      if(locked) return;
+      const recipients = getRecipientsSetting().split(',').map(m => m.trim()).filter(m => m);
+      els.tagContainer.innerHTML = '';
+      recipients.forEach((mail, index) => {
+        const tag = document.createElement('div');
+        tag.className = 'recipient-tag';
+        tag.innerHTML = `<span>${mail}</span><span class="remove-tag" id="remove-mail-${index}">✕</span>`;
+        els.tagContainer.appendChild(tag);
+        el(`remove-mail-${index}`).onclick = () => removeRecipient(index);
+      });
+    }
+    function removeRecipient(index) {
+      if(isRecipientsLocked()) return;
+      const recipients = getRecipientsSetting().split(',').map(m => m.trim()).filter(m => m);
+      recipients.splice(index, 1);
+      setRecipientsSetting(recipients.join(', '));
+      refreshDraftsUi();
+    }
+    function updateLockUi(){
+      const locked = isRecipientsLocked();
+      els.settingsRecipients.style.display = locked ? 'none' : 'block';
+      els.btnToggleLock.textContent = locked ? 'Oplås' : 'Lås';
+      els.lockStateBadge.textContent = locked ? '🔒 Låst' : '🔓 Ulåst';
+      els.lockStateBadge.className = locked ? 'pill ok' : 'pill warn';
+      els.lockCodeHint.textContent = locked ? 'Indtast kode og tryk Oplås.' : 'Indtast kode og tryk Lås.';
+      renderTags();
+    }
+    function refreshDraftsUi(){
+      const drafts = readDrafts();
+      els.draftStatus.textContent = `${drafts.length} kladde${drafts.length === 1 ? '' : 'r'}`;
+      if (drafts.length > 0) {
+          els.emptyText.textContent = `Klar til at sende ${drafts.length} kladde${drafts.length === 1 ? '' : 'r'}.`;
+      } else {
+          els.emptyText.textContent = "Ingen kladder endnu.";
+      }
+      els.draftList.innerHTML = '';
+      drafts.forEach((d, index) => {
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML = `
+<div style="flex-grow:1"><strong>${d.headline}</strong><div class="small">${d.date} | ${d.workNr}</div></div>
+<button class="btn-delete" id="del-draft-${index}" title="Slet kladde">🗑️</button>
+        `;
+        row.onclick = () => { els.draftPreview.textContent = d.body; };
+        els.draftList.appendChild(row);
+        el(`del-draft-${index}`).onclick = (e) => {
+            e.stopPropagation();
+            if(confirm("Er du sikker på, at du vil slette denne kladde? Den kan ikke gendannes.")){
+                const currentDrafts = readDrafts();
+                currentDrafts.splice(index, 1);
+                writeDrafts(currentDrafts);
+                els.draftPreview.textContent = "Vælg en kladde fra listen.";
+                refreshDraftsUi();
+            }
+        };
+      });
+      els.settingsLockHint.textContent = isRecipientsLocked() ? 'Modtagere: Låst 🔒' : 'Modtagere: Ulåst 🔓';
+    }
+ 
+    async function refreshHistory() {
+        const selectedDate = els.historyDatePicker.value;
+        els.historyPreview.textContent = "Henter data fra Firebase...";
+        try {
+            const q = query(
+                collection(db, "logs"), 
+                where("date", "==", selectedDate),
+                orderBy("createdAt", "desc")
+            );
+            const querySnapshot = await getDocs(q);
+            els.historyList.innerHTML = '';
+            if (querySnapshot.empty) {
+                els.historyList.innerHTML = '<div style="padding:10px;" class="small">Ingen arkiverede kladder fundet på denne dato.</div>';
+                els.historyPreview.textContent = "Ingen data.";
+                return;
+            }
+ 
+            querySnapshot.forEach((doc) => {
+                const d = doc.data();
+                const row = document.createElement('div');
+                row.className = 'list-row';
+                row.innerHTML = `<div><strong>${d.headline}</strong><div class="small">${d.date} | ${d.workNr}</div></div>`;
+                row.onclick = () => { 
+                    const when = d.createdAt ? d.createdAt.toDate().toLocaleString('da-DK') : 'Ukendt';
+                    els.historyPreview.textContent = `Dato: ${d.date}\nArbejdsnummer: ${d.workNr}\nOverskrift: ${d.headline}\nDatabaseid: ${doc.id}\nGemt i Firebase: ${when}\n\n${d.body}`; 
+                };
+                els.historyList.appendChild(row);
+            });
+            els.historyPreview.textContent = "Vælg en post fra listen.";
+        } catch (error) {
+            console.error("Firebase fejl:", error);
+            els.historyPreview.textContent = "Fejl ved hentning af data. Sørg for at index er oprettet i Firebase.";
+        }
+    }
+    function saveDraft(){
+      if(!validateInputs()) return;
+      const logData = {
+        id: uuid(),
+        date: els.logDate.value,
+        workNr: els.workNr.value,
+        headline: els.headline.value,
+        body: els.bodyText.value,
+        createdAt: new Date().toISOString()
+      };
+      const drafts = readDrafts();
+      drafts.push(logData);
+      writeDrafts(drafts);
+      alert('Kladde gemt lokalt.');
+      els.workNr.value = ''; els.headline.value = ''; els.bodyText.value = '';
+      refreshDraftsUi();
+    }
+ 
+    function buildMailBodyFromDrafts(drafts){
+      return drafts.map((d, i)=>{
+        const when = new Date(d.createdAt).toLocaleString('da-DK');
+        return `--- LOG ${i+1} ---\nDato: ${d.date}\nArbejdsnummer: ${d.workNr}\nOverskrift: ${d.headline}\nOprettet: ${when}\n\n${d.body || ''}`;
+      }).join('\n\n');
+    }
+ 
+    function mailto(to, subject, body){
+      const href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = href;
+    }
+ 
+    async function sendAll(){
+      const drafts = readDrafts();
+      if(drafts.length === 0) return;
+      const to = getRecipientsSetting();
+      if(!to){ alert('Angiv modtagere i Indstillinger først.'); return; }
+      if(!confirm(`Send ${drafts.length} kladder, upload til Firebase og ryd listen?`)) return;
+      els.uploadStatus.style.display = "block";
+      els.btnSendAll.disabled = true;
+ 
+      try {
+        for (const d of drafts) {
+          await addDoc(collection(db, "logs"), {
+            date: d.date,
+            workNr: d.workNr,
+            headline: d.headline,
+            body: d.body,
+            createdAt: serverTimestamp()
+          });
+        }
+        const subject = `[LOG] ${drafts.length} kladder - ${new Date().toLocaleString('da-DK')}`;
+        const body = `${buildMailBodyFromDrafts(drafts)}\n\n---\nSendt fra Log & Kladder-app`;
+        mailto(to, subject, body);
+        writeDrafts([]);
+        refreshDraftsUi();
+        alert("Kladder gemt i Firebase og sendt til mail!");
+      } catch (error) {
+        console.error("Fejl ved upload:", error);
+        alert("Der opstod en fejl ved upload.");
+      } finally {
+        els.uploadStatus.style.display = "none";
+        els.btnSendAll.disabled = false;
+      }
+    }
+    els.tabNew.onclick = () => { 
+        els.pageNew.style.display='block'; els.pageDrafts.style.display='none'; els.pageHistory.style.display='none';
+        els.tabNew.classList.add('active'); els.tabDrafts.classList.remove('active'); els.tabHistory.classList.remove('active'); 
+    };
+    els.tabDrafts.onclick = () => { 
+        els.pageNew.style.display='none'; els.pageDrafts.style.display='block'; els.pageHistory.style.display='none';
+        els.tabDrafts.classList.add('active'); els.tabNew.classList.remove('active'); els.tabHistory.classList.remove('active'); 
+        refreshDraftsUi(); 
+    };
+    els.tabHistory.onclick = () => {
+        els.pageNew.style.display='none'; els.pageDrafts.style.display='none'; els.pageHistory.style.display='block';
+        els.tabHistory.classList.add('active'); els.tabNew.classList.remove('active'); els.tabDrafts.classList.remove('active');
+        els.historyDatePicker.value = todayISO();
+        refreshHistory();
+    };
+ 
+    els.historyDatePicker.onchange = refreshHistory;
+    els.btnTheme.onclick = toggleTheme;
+    els.btnOpenSettings.onclick = () => { els.settingsModal.style.display='block'; updateLockUi(); };
+    els.btnCloseSettings.onclick = () => { els.settingsModal.style.display='none'; };
+    els.btnSave.onclick = saveDraft;
+    els.btnSendAll.onclick = sendAll;
+    els.workNr.oninput = sanitizeWorkNr;
+    els.settingsRecipients.oninput = (e) => {
+      if(els.settingsRecipients.value.endsWith(',')){
+        const mail = els.settingsRecipients.value.slice(0,-1).trim();
+        if(mail){
+          const current = getRecipientsSetting();
+          setRecipientsSetting(current ? current + ', ' + mail : mail);
+        }
+        els.settingsRecipients.value = '';
+      }
+    };
+    els.btnToggleLock.onclick = () => {
+      const code = els.lockCodeInput.value;
+      const savedCode = localStorage.getItem(STORAGE_KEYS.lockCode);
+      if(code === savedCode){
+        setRecipientsLocked(!isRecipientsLocked());
+        els.lockCodeInput.value = '';
+        updateLockUi();
+        refreshDraftsUi();
+      } else { alert('Forkert kode'); }
+    };
+    els.btnSetOrChangeCode.onclick = () => {
+      const newCode = prompt('Indtast ny kode:');
+      if(newCode) { localStorage.setItem(STORAGE_KEYS.lockCode, newCode); alert('Kode opdateret'); }
+    };
+    els.btnSaveSettings.onclick = () => { els.settingsModal.style.display='none'; };
+    els.logDate.value = todayISO();
+    applyTheme(localStorage.getItem(STORAGE_KEYS.theme) || 'light');
+    refreshDraftsUi();
+</script>
+</body>
+</html>
