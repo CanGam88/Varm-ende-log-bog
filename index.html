@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
-    <title>ROCKWOOL - Logbog</title>
+    <title>ROCKWOOL - Logbog Final</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -65,21 +65,14 @@
             background-color: var(--input-bg) !important; color: var(--text-main) !important; 
             font-size: 16px; box-sizing: border-box; outline: none;
         }
-        
-        input:-webkit-autofill {
-            -webkit-text-fill-color: var(--text-main) !important;
-            -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset !important;
-        }
 
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 14px; margin-top: 20px; text-transform: uppercase; }
         
         .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
         .list-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .list-info { flex: 1; }
-        .list-item strong { font-size: 16px; color: #ffffff; display: block; margin-bottom: 2px; }
+        .list-item strong { font-size: 16px; color: var(--text-main); display: block; margin-bottom: 2px; }
         .list-item .info-line { font-size: 12px; color: var(--text-muted); display: block; }
-        
-        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
+        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.1); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
 
         .list-actions { display: flex; gap: 8px; margin-left: 10px; }
         .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 12px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; }
@@ -101,7 +94,6 @@
 <div id="menuContent">
     <button onclick="location.reload()" class="menu-item">🏠 Forside</button>
     <button onclick="toggleTheme()" class="menu-item">🌓 Skift Tema</button>
-    <button onclick="handleAdminOpen()" class="menu-item">⚙️ Indstillinger</button>
 </div>
 
 <main class="app-container">
@@ -115,10 +107,8 @@
         <div class="card">
             <label>Dato (Låst)</label>
             <input id="logDate" type="date" readonly />
-            
-            <label>Arbejdsnummer (Maks 5 cifre)</label>
+            <label>Arbejdsnummer (5 cifre)</label>
             <input id="workNr" type="tel" pattern="[0-9]*" maxlength="5" placeholder="Indtast nr..." oninput="this.value = this.value.replace(/[^0-9]/g, '');"/>
-            
             <label>Overskrift</label>
             <input id="headline" type="text" placeholder="Titel..."/>
             <label>Beskrivelse</label>
@@ -129,15 +119,15 @@
 
     <section id="pageDrafts" style="display:none">
         <div class="card">
-            <h2 style="color:var(--rock-red); margin-top:0;">KLADDER</h2>
+            <h2 style="color:var(--rock-red); margin-top:0;">DAGENS KLADDER</h2>
             <div id="draftList"></div>
-            <button id="btnSendAll" class="btn-red" style="display:none;">SEND & ARKIVÉR ALLE</button>
+            <button id="btnSendAll" class="btn-red" style="display:none;">SEND VIA OUTLOOK & ARKIVÉR</button>
         </div>
     </section>
 
     <section id="pageHistory" style="display:none">
         <div class="card">
-            <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK</h2>
+            <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
             <label>Vælg dato</label>
             <input id="historyDate" type="date" onchange="fetchHistory()" />
             <button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
@@ -167,6 +157,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const FIXED_MAIL = "COM-VAM-Ropex-Polk@rockwool.com";
 
     enableIndexedDbPersistence(db).catch(() => {});
 
@@ -208,12 +199,12 @@
             body: el('bodyText').value 
         };
 
-        if(!d.workNr || d.workNr.length > 5) {
-            showModal("<h2>Ugyldigt nummer</h2><p>Indtast venligst et arbejdsnummer på maks 5 cifre.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+        if(d.workNr.length !== 5) {
+            showModal("<h2>Fejl</h2><p>Arbejdsnummer skal være præcis 5 cifre.</p><button class='btn-red' onclick='closeModal()'>RET</button>");
             return;
         }
         if(!d.headline) {
-            showModal("<h2>Mangler data</h2><p>Udfyld venligst overskriften.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+            showModal("<h2>Mangler data</h2><p>Indtast venligst en overskrift.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
             return;
         }
 
@@ -221,7 +212,7 @@
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
-        showModal("<h2>Gemt!</h2><p>Kladde er oprettet.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+        showModal("<h2>Kladde gemt!</h2><p>Logbogen er gemt lokalt.</p><button class='btn-red' onclick='showPage(\"pageDrafts\", \"tabDrafts\"); closeModal();'>SE KLADDER</button>");
     };
 
     window.renderDrafts = () => {
@@ -232,7 +223,7 @@
                 <div class="list-header">
                     <div class="list-info">
                         <strong>${d.headline}</strong>
-                        <span class="info-line">Nr: ${d.workNr} | ${d.date} kl. ${d.time || '--:--'}</span>
+                        <span class="info-line">Nr: ${d.workNr} | ${d.date} kl. ${d.time}</span>
                     </div>
                     <div class="list-actions">
                         <button class="btn-small" onclick="editDraft(${i})">Ret</button>
@@ -241,7 +232,7 @@
                 </div>
                 <div class="body-content">${d.body}</div>
             </div>
-        `).join('') || "<p style='text-align:center; opacity:0.5;'>Ingen kladder.</p>";
+        `).join('') || "<p style='text-align:center; opacity:0.5;'>Ingen kladder endnu.</p>";
     };
 
     window.editDraft = (index) => {
@@ -264,18 +255,43 @@
 
     el('btnSendAll').onclick = async () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
-        showModal("<h2>Sender...</h2>");
+        if(drafts.length === 0) return;
+
+        // 1. GENERÉR MAIL TEKST
+        let mailBody = "Daglige logs fra Ropex Logbog App:\n\n";
+        drafts.forEach((d, i) => {
+            mailBody += `---------------------------\n`;
+            mailBody += `LOG #${i+1}\n`;
+            mailBody += `Arbejdsnr: ${d.workNr}\n`;
+            mailBody += `Tid: ${d.date} kl. ${d.time}\n`;
+            mailBody += `Overskrift: ${d.headline}\n`;
+            mailBody += `Beskrivelse:\n${d.body}\n\n`;
+        });
+        mailBody += `---------------------------\nSendt via Logbog App`;
+
+        const subject = encodeURIComponent(`Ropex Logbog Rapport - ${getToday()}`);
+        const body = encodeURIComponent(mailBody);
+        
+        // 2. ÅBN MAIL KLIENT (Outlook)
+        window.location.href = `mailto:${FIXED_MAIL}?subject=${subject}&body=${body}`;
+
+        // 3. ARKIVÉR TIL FIREBASE & TØM LOKAL LISTE
+        showModal("<h2>Arkiverer i databasen...</h2>");
         try {
-            for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
+            for(let d of drafts) { 
+                await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); 
+            }
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-            showModal("<h2>Succes!</h2><p>Logs er arkiveret.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
-        } catch(e) { alert("Fejl: " + e.message); }
+            showModal(`<h2>Logbogen er sendt!</h2><p>Dine data er nu gemt i arkivet og sendt mod Outlook.</p><button class='btn-red' onclick='closeModal()'>OK</button>`);
+        } catch(e) { 
+            alert("Fejl ved arkivering: " + e.message); 
+        }
     };
 
     window.fetchHistory = async () => {
         const date = el('historyDate').value;
-        el('historyList').innerHTML = "<p>Henter...</p>";
+        el('historyList').innerHTML = "<p>Søger i arkivet...</p>";
         const q = query(collection(db, "logs"), where("date", "==", date));
         const snap = await getDocs(q);
         let h = "";
@@ -283,52 +299,36 @@
             const d = doc.data();
             h += `<div class="card" style="margin-bottom:10px; border-left:4px solid var(--rock-red);">
                 <strong style="color:var(--rock-red);">${d.headline}</strong>
-                <small style="color:var(--text-muted);">Nr: ${d.workNr} ${d.time ? '| kl. ' + d.time : ''}</small>
+                <small style="color:var(--text-muted);">Nr: ${d.workNr} | Tid: ${d.time}</small>
                 <p style="font-size:14px; white-space:pre-wrap; margin-top:10px;">${d.body}</p>
             </div>`;
         });
-        el('historyList').innerHTML = h || "Ingen logs.";
+        el('historyList').innerHTML = h || "Ingen arkiverede logs fundet for denne dato.";
         el('btnPDF').style.display = h ? 'block' : 'none';
     };
 
     window.generatePDF = () => {
         const element = el('historyList');
-        
         const opt = { 
             margin: 10, 
             filename: `Log-${el('historyDate').value}.pdf`, 
             html2canvas: { scale: 2, backgroundColor: '#ffffff' }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         };
-
-        // Gemmer originale styles
         const originalCards = element.querySelectorAll('.card');
         const styles = [];
-        
         originalCards.forEach(c => {
             styles.push({ bg: c.style.backgroundColor, color: c.style.color });
             c.style.backgroundColor = '#ffffff';
             c.style.color = '#1a1a1a';
         });
-
         html2pdf().set(opt).from(element).save().then(() => {
-            // Genskaber temaet efter eksport
             originalCards.forEach((c, i) => {
                 c.style.backgroundColor = styles[i].bg;
                 c.style.color = styles[i].color;
             });
         });
     };
-
-    window.handleAdminOpen = () => {
-        el('menuContent').style.display = 'none';
-        showModal(`<h2>Admin</h2><input type="password" id="pw" placeholder="Kode"><button class="btn-red" onclick="checkPw()">LOG IND</button>`);
-    };
-    window.checkPw = () => { if(el('pw').value === "1234") { 
-        const m = localStorage.getItem('rw_mails') || '';
-        showModal(`<h2>Mail</h2><input id="mSet" value="${m}"><button class="btn-red" onclick="saveM()">GEM</button>`);
-    }};
-    window.saveM = () => { localStorage.setItem('rw_mails', el('mSet').value); closeModal(); };
 </script>
 </body>
 </html>
