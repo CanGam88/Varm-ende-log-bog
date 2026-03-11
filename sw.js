@@ -1,21 +1,22 @@
-const CACHE_NAME = 'rw-log-v1';
-const ASSETS_TO_CACHE = [
-  'index.html',
-  'manifest.json',
-  // Tilføj stien til dit logo/ikon herunder:
-  'icon-192.png'
+const CACHE_NAME = 'ropex-log-v2'; // Opdateret version tvinger opdatering hos brugeren
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
 
-// Installerer Service Worker og gemmer filer i cache
+// Installation: Gemmer filer i cachen
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      return cache.addAll(ASSETS);
     })
   );
+  self.skipWaiting();
 });
 
-// Aktivering og oprydning af gammel cache
+// Aktivering: Rydder op i gamle caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -26,11 +27,11 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Strategi: Prøv netværk først, fald tilbage på cache hvis offline
+// Fetch: Serverer filer fra cache, selv når man er offline
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
     })
   );
 });
