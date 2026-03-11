@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
-    <title>ROCKWOOL - Logbog Final</title>
+    <title>ROCKWOOL - Logbog</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -121,7 +121,7 @@
         <div class="card">
             <h2 style="color:var(--rock-red); margin-top:0;">DAGENS KLADDER</h2>
             <div id="draftList"></div>
-            <button id="btnSendAll" class="btn-red" style="display:none;">SEND VIA OUTLOOK & ARKIVÉR</button>
+            <button id="btnSendAll" class="btn-red" style="display:none;">SEND OG GEM</button>
         </div>
     </section>
 
@@ -260,12 +260,7 @@
         // 1. GENERÉR MAIL TEKST
         let mailBody = "Daglige logs fra Ropex Logbog App:\n\n";
         drafts.forEach((d, i) => {
-            mailBody += `---------------------------\n`;
-            mailBody += `LOG #${i+1}\n`;
-            mailBody += `Arbejdsnr: ${d.workNr}\n`;
-            mailBody += `Tid: ${d.date} kl. ${d.time}\n`;
-            mailBody += `Overskrift: ${d.headline}\n`;
-            mailBody += `Beskrivelse:\n${d.body}\n\n`;
+            mailBody += `---------------------------\nLOG #${i+1}\nArbejdsnr: ${d.workNr}\nTid: ${d.date} kl. ${d.time}\nOverskrift: ${d.headline}\nBeskrivelse:\n${d.body}\n\n`;
         });
         mailBody += `---------------------------\nSendt via Logbog App`;
 
@@ -276,14 +271,18 @@
         window.location.href = `mailto:${FIXED_MAIL}?subject=${subject}&body=${body}`;
 
         // 3. ARKIVÉR TIL FIREBASE & TØM LOKAL LISTE
-        showModal("<h2>Arkiverer i databasen...</h2>");
+        showModal("<h2>Arkiverer og rydder...</h2>");
         try {
             for(let d of drafts) { 
                 await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); 
             }
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
-            showModal(`<h2>Logbogen er sendt!</h2><p>Dine data er nu gemt i arkivet og sendt mod Outlook.</p><button class='btn-red' onclick='closeModal()'>OK</button>`);
+            
+            // Fører brugeren tilbage til "Ny log" siden
+            showPage('pageNew', 'tabNew');
+            
+            showModal(`<h2>Logbogen er sendt!</h2><p>Dine data er nu arkiveret, og du er klar til en ny log.</p><button class='btn-red' onclick='closeModal()'>OK</button>`);
         } catch(e) { 
             alert("Fejl ved arkivering: " + e.message); 
         }
