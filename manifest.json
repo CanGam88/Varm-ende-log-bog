@@ -1,22 +1,14 @@
 {
-  "name": "Rockwool Log & Kladder",
-  "short_name": "RW Log",
-  "description": "Logbogs-app til registrering af arbejdshændelser.",
-  "start_url": "index.html",
+  "name": "Ropex Logbog",
+  "short_name": "Logbog",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f3f4f6",
-  "theme_color": "#D20014",
-  "orientation": "portrait",
+  "background_color": "#0f111a",
+  "theme_color": "#E60028",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://www.rockwool.com/favicon.ico",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
       "type": "image/png"
     }
   ]
