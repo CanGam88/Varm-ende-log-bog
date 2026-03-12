@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ropex-log-v2'; // Opdateret version tvinger opdatering hos brugeren
+const CACHE_NAME = 'ropex-log-v3'; // Opdateret version tvinger opdatering hos brugeren
 const ASSETS = [
   './',
   './index.html',
@@ -35,3 +35,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
