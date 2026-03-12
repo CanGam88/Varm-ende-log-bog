@@ -1,333 +1,487 @@
 <!doctype html>
 <html lang="da">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
-    <title>ROCKWOOL - Logbog</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
+<title>ROCKWOOL - Logbog</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+
         :root {
+
             --rock-red: #E60028;
+
             --bg-page: #f2f4f6;
+
             --bg-card: #ffffff;
+
             --text-main: #1a1a1a;
+
             --text-muted: #666666;
+
             --border: #d1d5db;
+
             --input-bg: #f9fafb;
+
             --radius: 12px;
+
             --btn-radius: 50px;
+
         }
 
         body.dark-mode {
+
             --bg-page: #0f111a;
+
             --bg-card: #1a1c26;
+
             --text-main: #f8fafc;
+
             --text-muted: #94a3b8;
+
             --border: #334155;
+
             --input-bg: #2d3139;
+
         }
 
         body { 
+
             margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; 
+
             background-color: var(--bg-page); color: var(--text-main);
+
             display: flex; flex-direction: column; min-height: 100vh;
+
             transition: background 0.3s ease;
+
         }
 
         header { 
+
             background: var(--rock-red); padding: 0 20px; 
+
             display: flex; justify-content: space-between; align-items: center;
+
             height: 60px; color: white; position: sticky; top:0; z-index: 1000;
+
         }
 
         .header-logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; }
+
         .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 16px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; }
 
         #menuContent { 
+
             display:none; position:fixed; top:65px; left:20px; 
+
             background:var(--bg-card); border:1px solid var(--border); 
+
             border-radius:12px; z-index:2000; min-width: 220px; 
+
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+
         }
+
         .menu-item { width:100%; padding:15px 20px; border:none; background:none; text-align:left; color:var(--text-main); font-weight:700; cursor:pointer; border-bottom:1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 16px; }
 
         .app-container { max-width: 650px; margin: 20px auto; width: 95%; flex: 1; }
+
         .card { background: var(--bg-card); padding: 20px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
         .tab-container { display: flex; gap: 5px; margin-bottom: 20px; }
+
         .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 10px; font-size: 12px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; }
+
         .tab-btn.active { background: var(--rock-red); color: white; }
 
         label { display: block; font-weight: 800; font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
-        
+
         input, textarea { 
+
             width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); 
+
             background-color: var(--input-bg) !important; color: var(--text-main) !important; 
+
             font-size: 16px; box-sizing: border-box; outline: none;
+
         }
 
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 14px; margin-top: 20px; text-transform: uppercase; }
-        
+
         .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+
         .list-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+
         .list-item strong { font-size: 16px; color: var(--text-main); display: block; margin-bottom: 2px; }
+
         .list-item .info-line { font-size: 12px; color: var(--text-muted); display: block; }
+
         .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.1); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
 
         .list-actions { display: flex; gap: 8px; margin-left: 10px; }
+
         .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 12px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; }
+
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
 
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
+
         .modal-content { background: var(--bg-card); color: var(--text-main); margin: 20% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
 
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
-    </style>
+</style>
 </head>
 <body class="dark-mode">
-
 <header>
-    <button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
-    <div class="header-logo">ROCKWOOL</div>
+<button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
+<div class="header-logo">ROCKWOOL</div>
 </header>
-
 <div id="menuContent">
-    <button onclick="location.reload()" class="menu-item">🏠 Forside</button>
-    <button onclick="toggleTheme()" class="menu-item">🌓 Skift Tema</button>
+<button onclick="location.reload()" class="menu-item">🏠 Forside</button>
+<button onclick="toggleTheme()" class="menu-item">🌓 Skift Tema</button>
 </div>
-
 <main class="app-container">
-    <div class="tab-container">
-        <button id="tabNew" class="tab-btn active" onclick="showPage('pageNew', 'tabNew')">Ny Log</button>
-        <button id="tabDrafts" class="tab-btn" onclick="showPage('pageDrafts', 'tabDrafts')">Kladder</button>
-        <button id="tabHistory" class="tab-btn" onclick="showPage('pageHistory', 'tabHistory')">Historik</button>
-    </div>
-
-    <section id="pageNew">
-        <div class="card">
-            <label>Dato (Låst)</label>
-            <input id="logDate" type="date" readonly />
-            <label>Arbejdsnummer (5 cifre)</label>
-            <input id="workNr" type="tel" pattern="[0-9]*" maxlength="5" placeholder="Indtast nr..." oninput="this.value = this.value.replace(/[^0-9]/g, '');"/>
-            <label>Overskrift</label>
-            <input id="headline" type="text" placeholder="Titel..."/>
-            <label>Beskrivelse</label>
-            <textarea id="bodyText" rows="6" placeholder="Skriv detaljer her..."></textarea>
-            <button id="btnSave" class="btn-red">GEM SOM KLADDE</button>
-        </div>
-    </section>
-
-    <section id="pageDrafts" style="display:none">
-        <div class="card">
-            <h2 style="color:var(--rock-red); margin-top:0;">DAGENS KLADDER</h2>
-            <div id="draftList"></div>
-            <button id="btnSendAll" class="btn-red" style="display:none;">SEND OG GEM</button>
-        </div>
-    </section>
-
-    <section id="pageHistory" style="display:none">
-        <div class="card">
-            <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
-            <label>Vælg dato</label>
-            <input id="historyDate" type="date" onchange="fetchHistory()" />
-            <button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
-            <div id="historyList" style="margin-top:20px;"></div>
-        </div>
-    </section>
-</main>
-
-<footer>App lavet af Lasse Gamborg</footer>
-
-<div id="customModal" class="modal">
-    <div class="modal-content" id="modal-body"></div>
+<div class="tab-container">
+<button id="tabNew" class="tab-btn active" onclick="showPage('pageNew', 'tabNew')">Ny Log</button>
+<button id="tabDrafts" class="tab-btn" onclick="showPage('pageDrafts', 'tabDrafts')">Kladder</button>
+<button id="tabHistory" class="tab-btn" onclick="showPage('pageHistory', 'tabHistory')">Historik</button>
 </div>
-
+<section id="pageNew">
+<div class="card">
+<label>Dato (Låst)</label>
+<input id="logDate" type="date" readonly />
+<label>Arbejdsnummer (5 cifre)</label>
+<input id="workNr" type="tel" pattern="[0-9]*" maxlength="5" placeholder="Indtast nr..." oninput="this.value = this.value.replace(/[^0-9]/g, '');"/>
+<label>Overskrift</label>
+<input id="headline" type="text" placeholder="Titel..."/>
+<label>Beskrivelse</label>
+<textarea id="bodyText" rows="6" placeholder="Skriv detaljer her..."></textarea>
+<button id="btnSave" class="btn-red">GEM SOM KLADDE</button>
+</div>
+</section>
+<section id="pageDrafts" style="display:none">
+<div class="card">
+<h2 style="color:var(--rock-red); margin-top:0;">DAGENS KLADDER</h2>
+<div id="draftList"></div>
+<button id="btnSendAll" class="btn-red" style="display:none;">SEND OG GEM</button>
+</div>
+</section>
+<section id="pageHistory" style="display:none">
+<div class="card">
+<h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
+<label>Vælg dato</label>
+<input id="historyDate" type="date" onchange="fetchHistory()" />
+<button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
+<div id="historyList" style="margin-top:20px;"></div>
+</div>
+</section>
+</main>
+<footer>App lavet af Lasse Gamborg</footer>
+<div id="customModal" class="modal">
+<div class="modal-content" id="modal-body"></div>
+</div>
 <script type="module">
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
     import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
+
       apiKey: "AIzaSyDBwdvNeqXGTBKSnrejyxv1rWwPLtcgXuw",
+
       authDomain: "logbog---lasse-gamborg.firebaseapp.com",
+
       projectId: "logbog---lasse-gamborg",
+
       storageBucket: "logbog---lasse-gamborg.firebasestorage.app",
+
       messagingSenderId: "501888216233",
+
       appId: "1:501888216233:web:980b74fb985a96e6370db8"
+
     };
 
     const app = initializeApp(firebaseConfig);
+
     const db = getFirestore(app);
+
     const FIXED_MAIL = "COM-VAM-Ropex-Polk@rockwool.com";
 
     enableIndexedDbPersistence(db).catch(() => {});
 
     const el = (id) => document.getElementById(id);
+
     const getToday = () => new Date().toISOString().split('T')[0];
+
     const getTimeNow = () => {
+
         const now = new Date();
+
         return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+
     };
 
     window.toggleTheme = () => {
+
         document.body.classList.toggle('dark-mode');
+
         localStorage.setItem('rw_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+
         el('menuContent').style.display = 'none';
+
     };
+
     if(localStorage.getItem('rw_theme') === 'light') document.body.classList.remove('dark-mode');
 
     window.toggleMenu = () => { const m = el('menuContent'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; };
+
     window.showModal = (html) => { el('modal-body').innerHTML = html; el('customModal').style.display = 'block'; };
+
     window.closeModal = () => { el('customModal').style.display = 'none'; };
 
     window.showPage = (pageId, tabId) => {
+
         ['pageNew', 'pageDrafts', 'pageHistory'].forEach(p => el(p).style.display = 'none');
+
         ['tabNew', 'tabDrafts', 'tabHistory'].forEach(t => el(t).classList.remove('active'));
+
         el(pageId).style.display = 'block';
+
         el(tabId).classList.add('active');
+
         if(pageId === 'pageDrafts') renderDrafts();
+
         if(pageId === 'pageHistory') el('historyDate').value = getToday();
+
     };
 
     el('logDate').value = getToday();
 
     el('btnSave').onclick = () => {
+
         const d = { 
+
             date: el('logDate').value, 
+
             time: getTimeNow(), 
+
             workNr: el('workNr').value, 
+
             headline: el('headline').value, 
+
             body: el('bodyText').value 
+
         };
 
         if(d.workNr.length !== 5) {
+
             showModal("<h2>Fejl</h2><p>Arbejdsnummer skal være præcis 5 cifre.</p><button class='btn-red' onclick='closeModal()'>RET</button>");
+
             return;
+
         }
+
         if(!d.headline) {
+
             showModal("<h2>Mangler data</h2><p>Indtast venligst en overskrift.</p><button class='btn-red' onclick='closeModal()'>OK</button>");
+
             return;
+
         }
 
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+
         drafts.push(d);
+
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+
         el('workNr').value = ''; el('headline').value = ''; el('bodyText').value = '';
+
         showModal("<h2>Kladde gemt!</h2><p>Logbogen er gemt lokalt.</p><button class='btn-red' onclick='showPage(\"pageDrafts\", \"tabDrafts\"); closeModal();'>SE KLADDER</button>");
+
     };
 
     window.renderDrafts = () => {
+
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+
         el('btnSendAll').style.display = drafts.length ? 'block' : 'none';
+
         el('draftList').innerHTML = drafts.map((d, i) => `
-            <div class="list-item">
-                <div class="list-header">
-                    <div class="list-info">
-                        <strong>${d.headline}</strong>
-                        <span class="info-line">Nr: ${d.workNr} | ${d.date} kl. ${d.time}</span>
-                    </div>
-                    <div class="list-actions">
-                        <button class="btn-small" onclick="editDraft(${i})">Ret</button>
-                        <button class="btn-small delete" onclick="deleteDraft(${i})">Slet</button>
-                    </div>
-                </div>
-                <div class="body-content">${d.body}</div>
-            </div>
+<div class="list-item">
+<div class="list-header">
+<div class="list-info">
+<strong>${d.headline}</strong>
+<span class="info-line">Nr: ${d.workNr} | ${d.date} kl. ${d.time}</span>
+</div>
+<div class="list-actions">
+<button class="btn-small" onclick="editDraft(${i})">Ret</button>
+<button class="btn-small delete" onclick="deleteDraft(${i})">Slet</button>
+</div>
+</div>
+<div class="body-content">${d.body}</div>
+</div>
+
         `).join('') || "<p style='text-align:center; opacity:0.5;'>Ingen kladder endnu.</p>";
+
     };
 
     window.editDraft = (index) => {
+
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+
         const d = drafts[index];
+
         el('workNr').value = d.workNr;
+
         el('headline').value = d.headline;
+
         el('bodyText').value = d.body;
+
         drafts.splice(index, 1);
+
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+
         showPage('pageNew', 'tabNew');
+
     };
 
     window.deleteDraft = (index) => {
+
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+
         drafts.splice(index, 1);
+
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+
         renderDrafts();
+
     };
 
     el('btnSendAll').onclick = async () => {
+
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+
         if(drafts.length === 0) return;
+ 
+        // 1. SKRIV TIL FIREBASE mail_queue – Cloud Function sender mailen automatisk
 
-        // 1. GENERÉR MAIL TEKST
-        let mailBody = "Daglige logs fra Ropex Logbog App:\n\n";
-        drafts.forEach((d, i) => {
-            mailBody += `---------------------------\nLOG #${i+1}\nArbejdsnr: ${d.workNr}\nTid: ${d.date} kl. ${d.time}\nOverskrift: ${d.headline}\nBeskrivelse:\n${d.body}\n\n`;
+        await addDoc(collection(db, "mail_queue"), {
+
+            to: FIXED_MAIL,
+
+            subject: `Ropex Logbog Rapport - ${getToday()}`,
+
+            logs: drafts,
+
+            sent: false
+
         });
-        mailBody += `---------------------------\nSendt via Logbog App`;
+ 
+        // 2. ARKIVÉR TIL FIREBASE & TØM LOKAL LISTE
 
-        const subject = encodeURIComponent(`Ropex Logbog Rapport - ${getToday()}`);
-        const body = encodeURIComponent(mailBody);
-        
-        // 2. ÅBN MAIL KLIENT (Outlook)
-        window.location.href = `mailto:${FIXED_MAIL}?subject=${subject}&body=${body}`;
-
-        // 3. ARKIVÉR TIL FIREBASE & TØM LOKAL LISTE
         showModal("<h2>Arkiverer og rydder...</h2>");
+
         try {
+
             for(let d of drafts) { 
+
                 await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); 
+
             }
+
             localStorage.setItem('rw_drafts', '[]');
+
             renderDrafts();
-            
-            // Fører brugeren tilbage til "Ny log" siden
+
             showPage('pageNew', 'tabNew');
-            
+
             showModal(`<h2>Logbogen er sendt!</h2><p>Dine data er nu arkiveret, og du er klar til en ny log.</p><button class='btn-red' onclick='closeModal()'>OK</button>`);
+
         } catch(e) { 
+
             alert("Fejl ved arkivering: " + e.message); 
+
         }
+
     };
 
     window.fetchHistory = async () => {
+
         const date = el('historyDate').value;
+
         el('historyList').innerHTML = "<p>Søger i arkivet...</p>";
+
         const q = query(collection(db, "logs"), where("date", "==", date));
+
         const snap = await getDocs(q);
+
         let h = "";
+
         snap.forEach(doc => {
+
             const d = doc.data();
+
             h += `<div class="card" style="margin-bottom:10px; border-left:4px solid var(--rock-red);">
-                <strong style="color:var(--rock-red);">${d.headline}</strong>
-                <small style="color:var(--text-muted);">Nr: ${d.workNr} | Tid: ${d.time}</small>
-                <p style="font-size:14px; white-space:pre-wrap; margin-top:10px;">${d.body}</p>
-            </div>`;
+<strong style="color:var(--rock-red);">${d.headline}</strong>
+<small style="color:var(--text-muted);">Nr: ${d.workNr} | Tid: ${d.time}</small>
+<p style="font-size:14px; white-space:pre-wrap; margin-top:10px;">${d.body}</p>
+</div>`;
+
         });
+
         el('historyList').innerHTML = h || "Ingen arkiverede logs fundet for denne dato.";
+
         el('btnPDF').style.display = h ? 'block' : 'none';
+
     };
 
     window.generatePDF = () => {
+
         const element = el('historyList');
+
         const opt = { 
+
             margin: 10, 
+
             filename: `Log-${el('historyDate').value}.pdf`, 
+
             html2canvas: { scale: 2, backgroundColor: '#ffffff' }, 
+
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+
         };
+
         const originalCards = element.querySelectorAll('.card');
+
         const styles = [];
+
         originalCards.forEach(c => {
+
             styles.push({ bg: c.style.backgroundColor, color: c.style.color });
+
             c.style.backgroundColor = '#ffffff';
+
             c.style.color = '#1a1a1a';
+
         });
+
         html2pdf().set(opt).from(element).save().then(() => {
+
             originalCards.forEach((c, i) => {
+
                 c.style.backgroundColor = styles[i].bg;
+
                 c.style.color = styles[i].color;
+
             });
+
         });
+
     };
 </script>
 </body>
 </html>
+ 
