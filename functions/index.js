@@ -1,18 +1,29 @@
-name: Deploy Firebase Functions
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install -g firebase-tools
-      - run: cd functions && npm install
-      - run: firebase functions:config:set sendgrid.key="DIN_SENDGRID_API_NØGLE"
-      - run: firebase deploy --only functions
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const sgMail = require("@sendgrid/mail");
+
+admin.initializeApp();
+
+exports.sendLogMail = functions.firestore
+  .document("mail_queue/{docId}")
+  .onCreate(async (snap) => {
+    const data = snap.data();
+
+    sgMail.setApiKey(functions.config().sendgrid.key);
+
+    let mailBody = "Daglige logs fra Ropex Logbog App:\n\n";
+    data.logs.forEach((d, i) => {
+      mailBody += `---------------------------\nLOG #${i+1}\nArbejdsnr: ${d.workNr}\nTid: ${d.date} kl. ${d.time}\nOverskrift: ${d.headline}\nBeskrivelse:\n${d.body}\n\n`;
+    });
+    mailBody += `---------------------------\nSendt via Logbog App`;
+
+    const msg = {
+      to: data.to,
+      from: "hhnh.rockwool@gmail.com",
+      subject: data.subject,
+      text: mailBody
+    };
+
+    await sgMail.send(msg);
+    await snap.ref.update({ sent: true, sentAt: admin.firestore.FieldValue.serverTimestamp() });
+  });
