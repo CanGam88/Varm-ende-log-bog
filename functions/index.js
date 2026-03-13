@@ -27,3 +27,4 @@ exports.sendLogMail = functions.firestore
     await sgMail.send(msg);
     await snap.ref.update({ sent: true, sentAt: admin.firestore.FieldValue.serverTimestamp() });
   });
+
