@@ -9,7 +9,7 @@ exports.sendLogMail = functions.firestore
   .onCreate(async (snap) => {
     const data = snap.data();
 
-    sgMail.setApiKey("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"); // ← indsæt din rigtige nøgle her
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     let mailBody = "Daglige logs fra Ropex Logbog App:\n\n";
     data.logs.forEach((d, i) => {
