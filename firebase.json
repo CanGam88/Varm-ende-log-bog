@@ -1,8 +1,5 @@
 {
   "functions": {
-    "source": "functions",
-    "environmentVariables": {
-      "SENDGRID_API_KEY": "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"
-    }
+    "source": "functions"
   }
 }
