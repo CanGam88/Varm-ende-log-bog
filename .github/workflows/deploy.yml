@@ -24,3 +24,4 @@ jobs:
           echo "GMAIL_PASS=${{ secrets.GMAIL_PASS }}" >> functions/.env
       - name: Deploy to Firebase
         run: firebase deploy --only functions --project logbog---lasse-gamborg --non-interactive
+ 
