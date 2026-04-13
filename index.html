@@ -207,7 +207,7 @@
 
     const db = getFirestore(app);
 
-    const FIXED_MAIL = "hahnh@rockwool.com";
+    const FIXED_MAILS = ["lasse.gamborg@rockwool.com", "hhnh@rockwool.com"];
 
     enableIndexedDbPersistence(db).catch(() => {});
 
@@ -366,11 +366,11 @@
 
         if(drafts.length === 0) return;
  
-        // 1. SKRIV TIL FIREBASE mail_queue – Cloud Function sender mailen automatisk
+        // 1. SKRIV TIL FIREBASE mail_queue – Cloud Function sender mailen automatisk via Nodemailer
 
         await addDoc(collection(db, "mail_queue"), {
 
-            to: FIXED_MAIL,
+            to: FIXED_MAILS,
 
             subject: `Ropex Logbog Rapport - ${getToday()}`,
 
@@ -484,5 +484,3 @@
 </script>
 </body>
 </html>
- 
-
