@@ -1,4 +1,4 @@
-// v5 - Nodemailer med Gmail App Password via .env fil
+// v6 - Nodemailer med Gmail App Password via .env fil
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
