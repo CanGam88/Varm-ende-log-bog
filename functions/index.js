@@ -1,7 +1,7 @@
-// v2
+// v5 - Nodemailer med Gmail App Password via .env fil
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const sgMail = require("@sendgrid/mail");
+const nodemailer = require("nodemailer");
 
 admin.initializeApp();
 
@@ -10,22 +10,45 @@ exports.sendLogMail = functions.firestore
   .onCreate(async (snap) => {
     const data = snap.data();
 
-    sgMail.setApiKey(Buffer.from("U0cucUdDV1ZYVGhSRzZzSVR0NXpJTzB3QS5oRXBVVmdnckpNZFc5MTF4aUUyMmpFSlZnRGRZUkdlLVFDOV9iV0lJWFRn", "base64").toString("utf8"));
+    // Opret transporter med Gmail App Password fra environment variables
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
 
+    // Byg mail-tekst fra logs
     let mailBody = "Daglige logs fra Ropex Logbog App:\n\n";
     data.logs.forEach((d, i) => {
-      mailBody += `---------------------------\nLOG #${i+1}\nArbejdsnr: ${d.workNr}\nTid: ${d.date} kl. ${d.time}\nOverskrift: ${d.headline}\nBeskrivelse:\n${d.body}\n\n`;
+      mailBody += `---------------------------\nLOG #${i + 1}\nArbejdsnr: ${d.workNr}\nTid: ${d.date} kl. ${d.time}\nOverskrift: ${d.headline}\nBeskrivelse:\n${d.body}\n\n`;
     });
     mailBody += `---------------------------\nSendt via Logbog App`;
 
-    const msg = {
-      to: data.to,
-      from: "hhnh.rockwool@gmail.com",
+    // Normaliser modtagere - accepter både string og array
+    const recipients = Array.isArray(data.to) ? data.to.join(", ") : data.to;
+
+    const mailOptions = {
+      from: `"Ropex Logbog" <${process.env.GMAIL_USER}>`,
+      to: recipients,
       subject: data.subject,
-      text: mailBody
+      text: mailBody,
     };
 
-    await sgMail.send(msg);
-    await snap.ref.update({ sent: true, sentAt: admin.firestore.FieldValue.serverTimestamp() });
+    try {
+      await transporter.sendMail(mailOptions);
+      await snap.ref.update({
+        sent: true,
+        sentAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      console.log("Mail sendt til:", recipients);
+    } catch (error) {
+      console.error("Fejl ved afsendelse:", error);
+      await snap.ref.update({
+        sent: false,
+        error: error.message
+      });
+      throw error;
+    }
   });
-
