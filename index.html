@@ -37,7 +37,6 @@
             height: 65px; color: white; position: sticky; top:0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        /* Header-content fylder nu hele bredden med 30px luft i siderne */
         .header-content {
             width: 100%;
             height: 100%;
@@ -45,7 +44,6 @@
             display: flex; justify-content: space-between; align-items: center;
             box-sizing: border-box;
         }
-        /* Gjort større, mere fremtrædende og placeret helt til højre */
         .header-logo { 
             font-weight: 900; 
             font-size: 26px; 
@@ -85,12 +83,8 @@
             padding: 4px;
             border-radius: 4px;
         }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            cursor: pointer;
-        }
-        input[type="date"] {
-            cursor: pointer;
-        }
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; }
+        input[type="date"] { cursor: pointer; }
 
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 15px; margin-top: 25px; text-transform: uppercase; transition: transform 0.1s, opacity 0.2s; }
         .btn-red:hover { opacity: 0.95; transform: translateY(-1px); }
@@ -107,20 +101,40 @@
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
         .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
+        /* Måneds-kalender modul til Historik */
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-title { font-weight: 800; font-size: 16px; text-transform: uppercase; color: var(--text-main); }
+        .calendar-nav-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .calendar-nav-btn:hover { border-color: var(--rock-red); color: var(--rock-red); }
+        
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; margin-bottom: 20px; }
+        .calendar-day-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 5px; }
+        .calendar-day { 
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; font-size: 13px; font-weight: 700; cursor: pointer; 
+            background: rgba(0,0,0,0.05); border: 2px solid transparent; color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        body.dark-mode .calendar-day { background: rgba(255,255,255,0.03); }
+        
+        /* Datoer MED historik (Grøn ring) */
+        .calendar-day.has-logs { 
+            border-color: #10B981; 
+            color: #10B981; 
+            background: rgba(16, 185, 129, 0.1); 
+            font-weight: 900;
+        }
+        .calendar-day.has-logs:hover { background: #10B981; color: white; }
+        .calendar-day.selected { background: var(--rock-red) !important; color: white !important; border-color: var(--rock-red) !important; }
+
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
         footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px; }
 
         @media (min-width: 800px) {
             .app-container { max-width: 1100px; }
-            .form-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 20px 30px;
-            }
-            .form-full-width {
-                grid-column: span 2;
-            }
+            .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; }
+            .form-full-width { grid-column: span 2; }
             .form-grid label { margin-top: 0; }
             textarea { rows: 8; }
             
@@ -133,29 +147,13 @@
         }
 
         #toast {
-            visibility: hidden;
-            min-width: 220px;
-            background-color: #10B981;
-            color: #ffffff;
-            text-align: center;
-            border-radius: 30px;
-            padding: 14px 28px;
-            position: fixed;
-            z-index: 3000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-weight: 700;
-            font-size: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.3s ease, bottom 0.3s ease;
+            visibility: hidden; min-width: 220px; background-color: #10B981; color: #ffffff;
+            text-align: center; border-radius: 30px; padding: 14px 28px; position: fixed;
+            z-index: 3000; left: 50%; bottom: 30px; transform: translateX(-50%);
+            font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0; transition: opacity 0.3s ease, bottom 0.3s ease;
         }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 40px;
-        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
 </style>
 </head>
 <body class="dark-mode">
@@ -208,8 +206,25 @@
 <section id="pageHistory" style="display:none">
 <div class="card">
 <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
-<label>Vælg dato</label>
-<input id="historyDate" type="date" onchange="fetchHistory()" onclick="this.showPicker && this.showPicker()" style="max-width:300px;" />
+
+<!-- Månedskalender oversigt -->
+<div class="calendar-header">
+    <button class="calendar-nav-btn" onclick="changeMonth(-1)">◄</button>
+    <div class="calendar-title" id="calendarTitle">Måned År</div>
+    <button class="calendar-nav-btn" onclick="changeMonth(1)">►</button>
+</div>
+<div class="calendar-grid" id="calendarGrid"></div>
+
+<div class="form-grid" style="margin-bottom: 20px;">
+    <div>
+        <label>Valgt dato</label>
+        <input id="historyDate" type="date" onchange="fetchHistoryForSelectedDate()" />
+    </div>
+    <div>
+        <label>Søg i valgte dato</label>
+        <input id="historySearch" type="text" placeholder="Søg på nr, overskrift eller tekst..." oninput="filterHistory()" />
+    </div>
+</div>
 <button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px; max-width:300px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
 <div id="historyList" style="margin-top:20px;"></div>
 </div>
@@ -249,13 +264,16 @@
         return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
     };
 
+    let cachedHistoryLogs = [];
+    let currentViewDate = new Date();
+
+    const monthNames = ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"];
+
     const showToast = (msg = "✓ Kladde gemt!") => {
         const toast = el('toast');
         toast.innerText = msg;
         toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2000);
+        setTimeout(() => { toast.classList.remove('show'); }, 2000);
     };
 
     const updateDraftTabBadge = () => {
@@ -266,18 +284,11 @@
 
     window.addEventListener('beforeunload', (e) => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
-        if (drafts.length > 0) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
+        if (drafts.length > 0) { e.preventDefault(); e.returnValue = ''; }
     });
 
     const saveWorkNr = (nr) => {
-        const data = {
-            workNr: nr,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('rw_saved_work_nr', JSON.stringify(data));
+        localStorage.setItem('rw_saved_work_nr', JSON.stringify({ workNr: nr, timestamp: Date.now() }));
     };
 
     const getSavedWorkNr = () => {
@@ -285,16 +296,10 @@
         if (!saved) return '';
         try {
             const data = JSON.parse(saved);
-            const fourHoursInMs = 4 * 60 * 60 * 1000;
-            if (Date.now() - data.timestamp < fourHoursInMs) {
-                return data.workNr;
-            } else {
-                localStorage.removeItem('rw_saved_work_nr');
-                return '';
-            }
-        } catch (e) {
+            if (Date.now() - data.timestamp < 4 * 60 * 60 * 1000) return data.workNr;
+            localStorage.removeItem('rw_saved_work_nr');
             return '';
-        }
+        } catch (e) { return ''; }
     };
 
     window.toggleTheme = () => {
@@ -315,7 +320,12 @@
         el(pageId).style.display = 'block';
         el(tabId).classList.add('active');
         if(pageId === 'pageDrafts') renderDrafts();
-        if(pageId === 'pageHistory') el('historyDate').value = getToday();
+        if(pageId === 'pageHistory') {
+            el('historyDate').value = getToday();
+            currentViewDate = new Date();
+            renderCalendarMonth();
+            fetchHistoryForSelectedDate();
+        }
     };
 
     el('logDate').value = getToday();
@@ -342,14 +352,11 @@
         }
 
         saveWorkNr(d.workNr);
-
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
 
-        el('headline').value = ''; 
-        el('bodyText').value = '';
-
+        el('headline').value = ''; el('bodyText').value = '';
         updateDraftTabBadge();
         showToast("✓ Kladde gemt!");
     };
@@ -377,9 +384,7 @@
     window.editDraft = (index) => {
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         const d = drafts[index];
-        el('workNr').value = d.workNr;
-        el('headline').value = d.headline;
-        el('bodyText').value = d.body;
+        el('workNr').value = d.workNr; el('headline').value = d.headline; el('bodyText').value = d.body;
         drafts.splice(index, 1);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
         updateDraftTabBadge();
@@ -398,46 +403,118 @@
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         if(drafts.length === 0) return;
 
-        await addDoc(collection(db, "mail_queue"), {
-            to: FIXED_MAILS,
-            subject: `Ropex Logbog Rapport - ${getToday()}`,
-            logs: drafts,
-            sent: false
-        });
-
+        await addDoc(collection(db, "mail_queue"), { to: FIXED_MAILS, subject: `Ropex Logbog Rapport - ${getToday()}`, logs: drafts, sent: false });
         showModal("<h2>Arkiverer og rydder...</h2>");
         try {
-            for(let d of drafts) { 
-                await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); 
-            }
+            for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
             localStorage.setItem('rw_drafts', '[]');
-            updateDraftTabBadge();
-            renderDrafts();
-            
+            updateDraftTabBadge(); renderDrafts();
             el('workNr').value = getSavedWorkNr();
-            
             showPage('pageNew', 'tabNew');
             showModal(`<h2>Logbogen er sendt!</h2><p>Dine data er nu arkiveret, og du er klar til en ny log.</p><button class='btn-red' onclick='closeModal()'>OK</button>`);
-        } catch(e) { 
-            alert("Fejl ved arkivering: " + e.message); 
-        }
+        } catch(e) { alert("Fejl ved arkivering: " + e.message); }
     };
 
-    window.fetchHistory = async () => {
+    // Kalender-funktioner for Historik
+    window.changeMonth = (delta) => {
+        currentViewDate.setMonth(currentViewDate.getMonth() + delta);
+        renderCalendarMonth();
+    };
+
+    const renderCalendarMonth = async () => {
+        const year = currentViewDate.getFullYear();
+        const month = currentViewDate.getMonth();
+        
+        el('calendarTitle').innerText = `${monthNames[month]} ${year}`;
+        
+        // Find alle datoer med gemte logs i denne måned fra Firebase
+        const startStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+        const lastDay = new Date(year, month + 1, 0).getDate();
+        const endStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+
+        const q = query(collection(db, "logs"), where("date", ">=", startStr), where("date", "<=", endStr));
+        const snap = await getDocs(q);
+        const activeDates = new Set();
+        snap.forEach(doc => { activeDates.add(doc.data().date); });
+
+        // Byg kalender-grid (Mandag til Søndag)
+        let html = `
+            <div class="calendar-day-label">Man</div>
+            <div class="calendar-day-label">Tir</div>
+            <div class="calendar-day-label">Ons</div>
+            <div class="calendar-day-label">Tor</div>
+            <div class="calendar-day-label">Fre</div>
+            <div class="calendar-day-label">Lør</div>
+            <div class="calendar-day-label">Søn</div>
+        `;
+
+        const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+        for(let i = 0; i < firstDayIndex; i++) {
+            html += `<div></div>`;
+        }
+
+        const selectedDate = el('historyDate').value;
+
+        for(let d = 1; d <= lastDay; d++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const hasLogs = activeDates.has(dateStr);
+            const isSelected = dateStr === selectedDate;
+
+            let classes = "calendar-day";
+            if(hasLogs) classes += " has-logs";
+            if(isSelected) classes += " selected";
+
+            html += `<div class="${classes}" onclick="selectCalendarDate('${dateStr}')">${d}</div>`;
+        }
+
+        el('calendarGrid').innerHTML = html;
+    };
+
+    window.selectCalendarDate = (dateStr) => {
+        el('historyDate').value = dateStr;
+        renderCalendarMonth();
+        fetchHistoryForSelectedDate();
+    };
+
+    window.fetchHistoryForSelectedDate = async () => {
         const date = el('historyDate').value;
+        el('historySearch').value = '';
         el('historyList').innerHTML = "<p style='grid-column: 1 / -1;'>Søger i arkivet...</p>";
         const q = query(collection(db, "logs"), where("date", "==", date));
         const snap = await getDocs(q);
+        
+        cachedHistoryLogs = [];
+        snap.forEach(doc => { cachedHistoryLogs.push(doc.data()); });
+        renderFilteredHistory(cachedHistoryLogs);
+    };
+
+    window.filterHistory = () => {
+        const searchTerm = el('historySearch').value.toLowerCase().trim();
+        if (!searchTerm) {
+            renderFilteredHistory(cachedHistoryLogs);
+            return;
+        }
+
+        const filtered = cachedHistoryLogs.filter(d => {
+            const headlineMatch = d.headline && d.headline.toLowerCase().includes(searchTerm);
+            const bodyMatch = d.body && d.body.toLowerCase().includes(searchTerm);
+            const workNrMatch = d.workNr && d.workNr.toString().includes(searchTerm);
+            return headlineMatch || bodyMatch || workNrMatch;
+        });
+
+        renderFilteredHistory(filtered);
+    };
+
+    const renderFilteredHistory = (logs) => {
         let h = "";
-        snap.forEach(doc => {
-            const d = doc.data();
+        logs.forEach(d => {
             h += `<div class="card" style="margin-bottom:0; border-left:4px solid var(--rock-red);">
                 <strong style="color:var(--rock-red); font-size: 16px;">${d.headline}</strong>
                 <small style="color:var(--text-muted); display:block; margin-top:2px;">Nr: ${d.workNr} | Tid: ${d.time}</small>
                 <p style="font-size:14px; white-space:pre-wrap; margin-top:12px;">${d.body}</p>
             </div>`;
         });
-        el('historyList').innerHTML = h || "<p style='grid-column: 1 / -1; opacity:0.5;'>Ingen arkiverede logs fundet for denne dato.</p>";
+        el('historyList').innerHTML = h || "<p style='grid-column: 1 / -1; opacity:0.5;'>Ingen arkiverede logs fundet for denne søgning/dato.</p>";
         el('btnPDF').style.display = h ? 'block' : 'none';
     };
 
