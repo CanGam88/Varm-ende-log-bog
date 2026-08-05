@@ -224,17 +224,11 @@
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
 
-        // Nulstil kun overskrift og beskrivelse - bevar arbejdsnummeret
+        // Nulstil overskrift og beskrivelse - bevar arbejdsnummeret
         el('headline').value = ''; 
         el('bodyText').value = '';
 
-        // Vis bekræftelse og bliv på forsiden
-        showModal(`
-            <h2>Kladde gemt!</h2>
-            <p>Din log er tilføjet til kladderne.</p>
-            <button class='btn-red' onclick='closeModal()'>OPRET NY LOG HER</button>
-            <button class='btn-secondary' onclick='showPage("pageDrafts", "tabDrafts"); closeModal();'>GÅ TIL KLADDER</button>
-        `);
+        // Bliver på siden helt uden pop-up
     };
 
     window.renderDrafts = () => {
