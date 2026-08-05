@@ -101,7 +101,7 @@
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
         .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
-        /* Måneds-kalender modul til Historik */
+        /* Kompakt Måneds-kalender modul til Historik */
         .calendar-wrapper {
             max-width: 450px;
             margin: 0 auto 25px auto;
@@ -135,6 +135,28 @@
         .calendar-day.has-logs:hover { background: #10B981; color: white; }
         .calendar-day.selected { background: var(--rock-red) !important; color: white !important; border-color: var(--rock-red) !important; }
 
+        /* Dato-sektions overskrifter i søgeresultater */
+        .date-group {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--rock-red);
+            padding-bottom: 8px;
+        }
+        .date-group-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--rock-red);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
         footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px; }
@@ -146,8 +168,12 @@
             .form-grid label { margin-top: 0; }
             textarea { rows: 8; }
             
-            #draftList, #historyList {
+            #draftList {
                 display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+                gap: 20px;
+            }
+            .cards-grid {
                 grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
                 gap: 20px;
             }
@@ -277,7 +303,7 @@
         return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
     };
 
-    let allFirebaseLogsCache = null; // Gemmer alle historiske logs ved første globale søgning
+    let allFirebaseLogsCache = null; 
     let currentViewDate = new Date();
 
     const monthNames = ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"];
@@ -423,7 +449,7 @@
         try {
             for(let d of drafts) { await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); }
             localStorage.setItem('rw_drafts', '[]');
-            allFirebaseLogsCache = null; // Nulstil cache så nye logs opdages i søgningen
+            allFirebaseLogsCache = null; 
             updateDraftTabBadge(); renderDrafts();
             el('workNr').value = getSavedWorkNr();
             showPage('pageNew', 'tabNew');
@@ -431,7 +457,6 @@
         } catch(e) { alert("Fejl ved arkivering: " + e.message); }
     };
 
-    // Kalender-funktioner for Historik
     window.changeMonth = (delta) => {
         currentViewDate.setMonth(currentViewDate.getMonth() + delta);
         renderCalendarMonth();
@@ -499,32 +524,28 @@
         
         const logs = [];
         snap.forEach(doc => { logs.push(doc.data()); });
-        renderHistoryCards(logs);
+        renderGroupedHistoryCards(logs, false);
     };
 
-    // Global søgning i hele historikken
+    // Global søgning i hele historikken med grupperet visning
     window.handleGlobalSearch = async () => {
         const searchTerm = el('historySearch').value.toLowerCase().trim();
 
-        // Hvis søgefeltet tømmes, vis den normale datovisning igen
         if (!searchTerm) {
             el('calendarSection').style.display = 'block';
             fetchHistoryForSelectedDate();
             return;
         }
 
-        // Skjul kalenderen, mens der søges i hele historikken
         el('calendarSection').style.display = 'none';
         el('historyList').innerHTML = "<p style='grid-column: 1 / -1;'>Søger i hele arkivet...</p>";
 
-        // Hent alle logs fra Firebase én gang og gem i cachen
         if (!allFirebaseLogsCache) {
             const snap = await getDocs(collection(db, "logs"));
             allFirebaseLogsCache = [];
             snap.forEach(doc => allFirebaseLogsCache.push(doc.data()));
         }
 
-        // Filtrer uafhængigt af store/små bogstaver på tværs af overskrift, beskrivelse og arbejdsnummer
         const filtered = allFirebaseLogsCache.filter(d => {
             const headlineMatch = d.headline && d.headline.toLowerCase().includes(searchTerm);
             const bodyMatch = d.body && d.body.toLowerCase().includes(searchTerm);
@@ -532,21 +553,64 @@
             return headlineMatch || bodyMatch || workNrMatch;
         });
 
-        renderHistoryCards(filtered, true);
+        renderGroupedHistoryCards(filtered, true);
     };
 
-    const renderHistoryCards = (logs, isGlobalSearch = false) => {
-        let h = "";
+    // Hjælpefunktion til at formatere datoer pænt (f.eks. "13. marts 2026")
+    const formatDatePretty = (dateStr) => {
+        if (!dateStr) return '';
+        const parts = dateStr.split('-');
+        if (parts.length !== 3) return dateStr;
+        const year = parts[0];
+        const monthIdx = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        return `${day}. ${monthNames[monthIdx]} ${year}`;
+    };
+
+    // Grupperer logs efter dato og viser dem i pæne, adskilte sektioner
+    const renderGroupedHistoryCards = (logs, isGlobalSearch = false) => {
+        if (logs.length === 0) {
+            el('historyList').innerHTML = `<p style='grid-column: 1 / -1; opacity:0.5;'>Ingen arkiverede logs fundet${isGlobalSearch ? ' for denne søgning.' : ' for denne dato.'}</p>`;
+            el('btnPDF').style.display = 'none';
+            return;
+        }
+
+        // Sorter nyeste datoer først
+        logs.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.time || '').localeCompare(a.time || ''));
+
+        // Gruppér pr. dato
+        const grouped = {};
         logs.forEach(d => {
-            const dateInfo = isGlobalSearch ? `Dato: ${d.date} | ` : '';
-            h += `<div class="card" style="margin-bottom:0; border-left:4px solid var(--rock-red);">
-                <strong style="color:var(--rock-red); font-size: 16px;">${d.headline}</strong>
-                <small style="color:var(--text-muted); display:block; margin-top:2px;">${dateInfo}Nr: ${d.workNr} | Tid: ${d.time}</small>
-                <p style="font-size:14px; white-space:pre-wrap; margin-top:12px;">${d.body}</p>
-            </div>`;
+            const dateKey = d.date || 'Ukendt dato';
+            if (!grouped[dateKey]) grouped[dateKey] = [];
+            grouped[dateKey].push(d);
         });
-        el('historyList').innerHTML = h || `<p style='grid-column: 1 / -1; opacity:0.5;'>Ingen arkiverede logs fundet${isGlobalSearch ? ' for denne søgning.' : ' for denne dato.'}</p>`;
-        el('btnPDF').style.display = h ? 'block' : 'none';
+
+        let html = "";
+        for (const [dateKey, dayLogs] of Object.entries(grouped)) {
+            html += `
+                <div class="date-group">
+                    <div class="date-group-title">📅 ${formatDatePretty(dateKey)}</div>
+                </div>
+                <div class="cards-grid">
+            `;
+
+            dayLogs.forEach(d => {
+                const timeText = d.time ? `Tid: ${d.time}` : 'Tid: Ej angivet';
+                html += `
+                    <div class="card" style="margin-bottom:0; border-left:4px solid var(--rock-red);">
+                        <strong style="color:var(--rock-red); font-size: 16px;">${d.headline}</strong>
+                        <small style="color:var(--text-muted); display:block; margin-top:2px;">Nr: ${d.workNr} | ${timeText}</small>
+                        <p style="font-size:14px; white-space:pre-wrap; margin-top:12px;">${d.body}</p>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+        }
+
+        el('historyList').innerHTML = html;
+        el('btnPDF').style.display = 'block';
     };
 
     window.generatePDF = () => {
