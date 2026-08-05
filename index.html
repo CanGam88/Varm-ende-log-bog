@@ -77,15 +77,6 @@
         }
         input:focus, textarea:focus { border-color: var(--rock-red); }
 
-        body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(0.9) sepia(1) saturate(5) hue-rotate(175deg);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; }
-        input[type="date"] { cursor: pointer; }
-
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 15px; margin-top: 25px; text-transform: uppercase; transition: transform 0.1s, opacity 0.2s; }
         .btn-red:hover { opacity: 0.95; transform: translateY(-1px); }
         .btn-red:active { transform: translateY(0); }
@@ -101,25 +92,25 @@
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
         .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
-        /* Kompakt Måneds-kalender modul til Historik */
+        /* Måneds-kalender modul til Historik - Forstørret og trukket mod venstre */
         .calendar-wrapper {
-            max-width: 450px;
-            margin: 0 auto 25px auto;
+            max-width: 580px;
+            margin: 0 0 20px 0;
             background: rgba(0, 0, 0, 0.1);
-            padding: 18px;
+            padding: 20px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .calendar-title { font-weight: 800; font-size: 15px; text-transform: uppercase; color: var(--text-main); }
-        .calendar-nav-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .calendar-title { font-weight: 800; font-size: 17px; text-transform: uppercase; color: var(--text-main); letter-spacing: 1px; }
+        .calendar-nav-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-weight: bold; cursor: pointer; transition: all 0.2s; }
         .calendar-nav-btn:hover { border-color: var(--rock-red); color: var(--rock-red); }
         
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; justify-items: center; }
-        .calendar-day-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 4px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; justify-items: center; }
+        .calendar-day-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
         .calendar-day { 
-            width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; 
-            border-radius: 50%; font-size: 13px; font-weight: 700; cursor: pointer; 
+            width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; font-size: 14px; font-weight: 700; cursor: pointer; 
             background: rgba(0,0,0,0.05); border: 2px solid transparent; color: var(--text-muted);
             transition: all 0.2s; box-sizing: border-box;
         }
@@ -241,27 +232,20 @@
 <div class="card">
 <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
 
-<!-- Global Søgebar -->
+<!-- Forstørret Månedskalender i venstre side -->
+<div class="calendar-wrapper">
+    <div class="calendar-header">
+        <button class="calendar-nav-btn" onclick="changeMonth(-1)">◄</button>
+        <div class="calendar-title" id="calendarTitle">Måned År</div>
+        <button class="calendar-nav-btn" onclick="changeMonth(1)">►</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+</div>
+
+<!-- Søgefelt placeret direkte under kalenderen -->
 <div style="margin-bottom: 25px;">
     <label>🔍 Søg i hele arkivet (uafhængigt af dato)</label>
     <input id="historySearch" type="text" placeholder="Søg på nr, overskrift eller tekst (f.eks. Ropex, Leje, 12345)..." oninput="handleGlobalSearch()" />
-</div>
-
-<!-- Kompakt Månedskalender oversigt (skjules under aktiv fritekstsøgning) -->
-<div id="calendarSection">
-    <div class="calendar-wrapper">
-        <div class="calendar-header">
-            <button class="calendar-nav-btn" onclick="changeMonth(-1)">◄</button>
-            <div class="calendar-title" id="calendarTitle">Måned År</div>
-            <button class="calendar-nav-btn" onclick="changeMonth(1)">►</button>
-        </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
-    </div>
-
-    <div style="margin-bottom: 20px; max-width: 300px;">
-        <label>Valgt dato</label>
-        <input id="historyDate" type="date" onchange="fetchHistoryForSelectedDate()" />
-    </div>
 </div>
 
 <button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px; max-width:300px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
@@ -304,6 +288,7 @@
     };
 
     let allFirebaseLogsCache = null; 
+    let selectedHistoryDate = getToday();
     let currentViewDate = new Date();
 
     const monthNames = ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"];
@@ -360,9 +345,8 @@
         el(tabId).classList.add('active');
         if(pageId === 'pageDrafts') renderDrafts();
         if(pageId === 'pageHistory') {
-            el('historyDate').value = getToday();
+            selectedHistoryDate = getToday();
             el('historySearch').value = '';
-            el('calendarSection').style.display = 'block';
             currentViewDate = new Date();
             renderCalendarMonth();
             fetchHistoryForSelectedDate();
@@ -492,12 +476,10 @@
             html += `<div></div>`;
         }
 
-        const selectedDate = el('historyDate').value;
-
         for(let d = 1; d <= lastDay; d++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const hasLogs = activeDates.has(dateStr);
-            const isSelected = dateStr === selectedDate;
+            const isSelected = dateStr === selectedHistoryDate;
 
             let classes = "calendar-day";
             if(hasLogs) classes += " has-logs";
@@ -510,16 +492,15 @@
     };
 
     window.selectCalendarDate = (dateStr) => {
-        el('historyDate').value = dateStr;
+        selectedHistoryDate = dateStr;
         el('historySearch').value = '';
         renderCalendarMonth();
         fetchHistoryForSelectedDate();
     };
 
     window.fetchHistoryForSelectedDate = async () => {
-        const date = el('historyDate').value;
         el('historyList').innerHTML = "<p style='grid-column: 1 / -1;'>Søger i arkivet...</p>";
-        const q = query(collection(db, "logs"), where("date", "==", date));
+        const q = query(collection(db, "logs"), where("date", "==", selectedHistoryDate));
         const snap = await getDocs(q);
         
         const logs = [];
@@ -527,17 +508,15 @@
         renderGroupedHistoryCards(logs, false);
     };
 
-    // Global søgning i hele historikken med grupperet visning
+    // Global søgning i hele historikken
     window.handleGlobalSearch = async () => {
         const searchTerm = el('historySearch').value.toLowerCase().trim();
 
         if (!searchTerm) {
-            el('calendarSection').style.display = 'block';
             fetchHistoryForSelectedDate();
             return;
         }
 
-        el('calendarSection').style.display = 'none';
         el('historyList').innerHTML = "<p style='grid-column: 1 / -1;'>Søger i hele arkivet...</p>";
 
         if (!allFirebaseLogsCache) {
@@ -556,7 +535,6 @@
         renderGroupedHistoryCards(filtered, true);
     };
 
-    // Hjælpefunktion til at formatere datoer pænt (f.eks. "13. marts 2026")
     const formatDatePretty = (dateStr) => {
         if (!dateStr) return '';
         const parts = dateStr.split('-');
@@ -567,7 +545,6 @@
         return `${day}. ${monthNames[monthIdx]} ${year}`;
     };
 
-    // Grupperer logs efter dato og viser dem i pæne, adskilte sektioner
     const renderGroupedHistoryCards = (logs, isGlobalSearch = false) => {
         if (logs.length === 0) {
             el('historyList').innerHTML = `<p style='grid-column: 1 / -1; opacity:0.5;'>Ingen arkiverede logs fundet${isGlobalSearch ? ' for denne søgning.' : ' for denne dato.'}</p>`;
@@ -575,10 +552,8 @@
             return;
         }
 
-        // Sorter nyeste datoer først
         logs.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.time || '').localeCompare(a.time || ''));
 
-        // Gruppér pr. dato
         const grouped = {};
         logs.forEach(d => {
             const dateKey = d.date || 'Ukendt dato';
@@ -617,7 +592,7 @@
         const element = el('historyList');
         const opt = { 
             margin: 10, 
-            filename: `Log-${el('historyDate').value}.pdf`, 
+            filename: `Log-${selectedHistoryDate}.pdf`, 
             html2canvas: { scale: 2, backgroundColor: '#ffffff' }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         };
