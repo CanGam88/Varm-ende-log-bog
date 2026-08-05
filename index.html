@@ -32,7 +32,6 @@
             transition: background 0.3s ease;
         }
         
-        /* Header optimeret så logo ikke ryger ud af skærmen */
         header { 
             background: var(--rock-red); 
             height: 65px; color: white; position: sticky; top:0; z-index: 1000;
@@ -74,6 +73,20 @@
         }
         input:focus, textarea:focus { border-color: var(--rock-red); }
 
+        /* Gør kalenderikonet i dato-input felter tydeligt og lyst i mørk tilstand */
+        body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.9) sepia(1) saturate(5) hue-rotate(175deg);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
+        input[type="date"] {
+            cursor: pointer;
+        }
+
         .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 15px; margin-top: 25px; text-transform: uppercase; transition: transform 0.1s, opacity 0.2s; }
         .btn-red:hover { opacity: 0.95; transform: translateY(-1px); }
         .btn-red:active { transform: translateY(0); }
@@ -93,7 +106,6 @@
         .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
         footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px; }
 
-        /* PC & Tablet Optimering (skærme over 800px) */
         @media (min-width: 800px) {
             .app-container { max-width: 1100px; }
             .form-grid {
@@ -107,7 +119,6 @@
             .form-grid label { margin-top: 0; }
             textarea { rows: 8; }
             
-            /* Kladder & Historik i flot kort-grid på PC */
             #draftList, #historyList {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
@@ -116,7 +127,6 @@
             .list-item { margin-bottom: 0; }
         }
 
-        /* Toast-besked nederst på skærmen */
         #toast {
             visibility: hidden;
             min-width: 220px;
@@ -194,7 +204,7 @@
 <div class="card">
 <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
 <label>Vælg dato</label>
-<input id="historyDate" type="date" onchange="fetchHistory()" style="max-width:300px;" />
+<input id="historyDate" type="date" onchange="fetchHistory()" onclick="this.showPicker && this.showPicker()" style="max-width:300px;" />
 <button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px; max-width:300px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
 <div id="historyList" style="margin-top:20px;"></div>
 </div>
@@ -234,7 +244,6 @@
         return now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
     };
 
-    // Funktion til diskret popup-besked (Toast)
     const showToast = (msg = "✓ Kladde gemt!") => {
         const toast = el('toast');
         toast.innerText = msg;
@@ -244,7 +253,6 @@
         }, 2000);
     };
 
-    // Funktioner til at gemme og hente arbejdsnummer med 4 timers udløb
     const saveWorkNr = (nr) => {
         const data = {
             workNr: nr,
@@ -291,7 +299,6 @@
         if(pageId === 'pageHistory') el('historyDate').value = getToday();
     };
 
-    // Initialiser felter ved indlæsning
     el('logDate').value = getToday();
     el('workNr').value = getSavedWorkNr();
 
@@ -314,18 +321,15 @@
             return;
         }
 
-        // Gem arbejdsnummeret til fremtidige oprettelser (gyldigt i 4 timer)
         saveWorkNr(d.workNr);
 
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.push(d);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
 
-        // Nulstil overskrift og beskrivelse - bevar arbejdsnummeret
         el('headline').value = ''; 
         el('bodyText').value = '';
 
-        // Vis diskret toast i 2 sekunder
         showToast("✓ Kladde gemt!");
     };
 
@@ -371,7 +375,6 @@
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         if(drafts.length === 0) return;
 
-        // 1. SKRIV TIL FIREBASE mail_queue – Cloud Function sender mailen automatisk via Nodemailer
         await addDoc(collection(db, "mail_queue"), {
             to: FIXED_MAILS,
             subject: `Ropex Logbog Rapport - ${getToday()}`,
@@ -379,7 +382,6 @@
             sent: false
         });
 
-        // 2. ARKIVÉR TIL FIREBASE & TØM LOKAL LISTE
         showModal("<h2>Arkiverer og rydder...</h2>");
         try {
             for(let d of drafts) { 
@@ -388,7 +390,6 @@
             localStorage.setItem('rw_drafts', '[]');
             renderDrafts();
             
-            // Indstil arbejdsnummeret på forsiden igen
             el('workNr').value = getSavedWorkNr();
             
             showPage('pageNew', 'tabNew');
