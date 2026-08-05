@@ -37,15 +37,21 @@
             height: 65px; color: white; position: sticky; top:0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
+        /* Header-content fylder nu hele bredden med 30px luft i siderne */
         .header-content {
-            max-width: 1100px;
-            margin: 0 auto;
+            width: 100%;
             height: 100%;
-            padding: 0 20px;
+            padding: 0 30px;
             display: flex; justify-content: space-between; align-items: center;
             box-sizing: border-box;
         }
-        .header-logo { font-weight: 900; font-size: 20px; letter-spacing: 1.5px; }
+        /* Gjort større, mere fremtrædende og placeret helt til højre */
+        .header-logo { 
+            font-weight: 900; 
+            font-size: 26px; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
         .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
         .btn-menu:hover { background: rgba(255,255,255,0.35); }
 
@@ -73,7 +79,6 @@
         }
         input:focus, textarea:focus { border-color: var(--rock-red); }
 
-        /* Gør kalenderikonet i dato-input felter tydeligt og lyst i mørk tilstand */
         body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(0.9) sepia(1) saturate(5) hue-rotate(175deg);
             cursor: pointer;
@@ -253,6 +258,20 @@
         }, 2000);
     };
 
+    const updateDraftTabBadge = () => {
+        const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        const count = drafts.length;
+        el('tabDrafts').innerText = count > 0 ? `KLADDER (${count})` : 'KLADDER';
+    };
+
+    window.addEventListener('beforeunload', (e) => {
+        const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
+        if (drafts.length > 0) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
     const saveWorkNr = (nr) => {
         const data = {
             workNr: nr,
@@ -301,6 +320,7 @@
 
     el('logDate').value = getToday();
     el('workNr').value = getSavedWorkNr();
+    updateDraftTabBadge();
 
     el('btnSave').onclick = () => {
         const d = { 
@@ -330,6 +350,7 @@
         el('headline').value = ''; 
         el('bodyText').value = '';
 
+        updateDraftTabBadge();
         showToast("✓ Kladde gemt!");
     };
 
@@ -361,6 +382,7 @@
         el('bodyText').value = d.body;
         drafts.splice(index, 1);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        updateDraftTabBadge();
         showPage('pageNew', 'tabNew');
     };
 
@@ -368,6 +390,7 @@
         let drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         drafts.splice(index, 1);
         localStorage.setItem('rw_drafts', JSON.stringify(drafts));
+        updateDraftTabBadge();
         renderDrafts();
     };
 
@@ -388,6 +411,7 @@
                 await addDoc(collection(db, "logs"), { ...d, sentAt: serverTimestamp() }); 
             }
             localStorage.setItem('rw_drafts', '[]');
+            updateDraftTabBadge();
             renderDrafts();
             
             el('workNr').value = getSavedWorkNr();
