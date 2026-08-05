@@ -31,16 +31,27 @@
             display: flex; flex-direction: column; min-height: 100vh;
             transition: background 0.3s ease;
         }
+        
+        /* Header optimeret så logo ikke ryger ud af skærmen */
         header { 
-            background: var(--rock-red); padding: 0 20px; 
-            display: flex; justify-content: space-between; align-items: center;
-            height: 60px; color: white; position: sticky; top:0; z-index: 1000;
+            background: var(--rock-red); 
+            height: 65px; color: white; position: sticky; top:0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .header-logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; }
-        .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 16px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; }
-        .btn-menu:hover { background: rgba(255,255,255,0.3); }
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            height: 100%;
+            padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-sizing: border-box;
+        }
+        .header-logo { font-weight: 900; font-size: 20px; letter-spacing: 1.5px; }
+        .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
+        .btn-menu:hover { background: rgba(255,255,255,0.35); }
+
         #menuContent { 
-            display:none; position:fixed; top:65px; left:20px; 
+            display:none; position:fixed; top:70px; left:20px; 
             background:var(--bg-card); border:1px solid var(--border); 
             border-radius:12px; z-index:2000; min-width: 220px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
@@ -48,47 +59,61 @@
         .menu-item { width:100%; padding:15px 20px; border:none; background:none; text-align:left; color:var(--text-main); font-weight:700; cursor:pointer; border-bottom:1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 16px; }
         .menu-item:hover { background: rgba(0,0,0,0.05); }
 
-        .app-container { max-width: 650px; margin: 20px auto; width: 95%; flex: 1; transition: max-width 0.3s ease; }
-        .card { background: var(--bg-card); padding: 25px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        .tab-container { display: flex; gap: 8px; margin-bottom: 20px; }
-        .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 12px; font-size: 13px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; transition: all 0.2s; }
-        .tab-btn.active, .tab-btn:hover { background: var(--rock-red); color: white; }
+        .app-container { max-width: 650px; margin: 30px auto; width: 92%; flex: 1; transition: max-width 0.3s ease; }
+        .card { background: var(--bg-card); padding: 30px; border-radius: var(--radius); margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
         
-        label { display: block; font-weight: 800; font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
+        .tab-container { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 14px; font-size: 13px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; transition: all 0.2s; }
+        .tab-btn.active, .tab-btn:hover { background: var(--rock-red); color: white; box-shadow: 0 4px 12px rgba(230,0,40,0.3); }
+        
+        label { display: block; font-weight: 800; font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; margin-top: 15px; letter-spacing: 0.5px; }
         input, textarea { 
-            width: 100%; padding: 14px; border-radius: 8px; border: 2px solid var(--border); 
+            width: 100%; padding: 14px 16px; border-radius: 8px; border: 2px solid var(--border); 
             background-color: var(--input-bg) !important; color: var(--text-main) !important; 
             font-size: 16px; box-sizing: border-box; outline: none; transition: border-color 0.2s;
         }
         input:focus, textarea:focus { border-color: var(--rock-red); }
 
-        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 14px; margin-top: 20px; text-transform: uppercase; transition: opacity 0.2s; }
-        .btn-red:hover { opacity: 0.9; }
-        .btn-secondary { background: transparent; color: var(--text-main); border: 2px solid var(--border); padding: 12px; width: 100%; border-radius: var(--btn-radius); font-weight: 700; cursor: pointer; font-size: 13px; margin-top: 10px; text-transform: uppercase; }
-        .list-item { padding: 15px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 15px; margin-top: 25px; text-transform: uppercase; transition: transform 0.1s, opacity 0.2s; }
+        .btn-red:hover { opacity: 0.95; transform: translateY(-1px); }
+        .btn-red:active { transform: translateY(0); }
+
+        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
         .list-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .list-item strong { font-size: 16px; color: var(--text-main); display: block; margin-bottom: 2px; }
+        .list-item strong { font-size: 16px; color: var(--text-main); display: block; margin-bottom: 4px; }
         .list-item .info-line { font-size: 12px; color: var(--text-muted); display: block; }
-        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.1); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
+        .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.15); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
         .list-actions { display: flex; gap: 8px; margin-left: 10px; }
-        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 12px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; }
+        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 6px 14px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; transition: all 0.2s; }
+        .btn-small:hover { background: var(--rock-red); color: white; }
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
+        .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
+
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
-        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
+        footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px; }
 
-        /* Responsive layout for større skærme (PC) */
-        @media (min-width: 768px) {
-            .app-container { max-width: 900px; }
+        /* PC & Tablet Optimering (skærme over 800px) */
+        @media (min-width: 800px) {
+            .app-container { max-width: 1100px; }
             .form-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 20px;
+                gap: 20px 30px;
             }
             .form-full-width {
                 grid-column: span 2;
             }
-            .form-grid label { margin-top: 5px; }
+            .form-grid label { margin-top: 0; }
+            textarea { rows: 8; }
+            
+            /* Kladder & Historik i flot kort-grid på PC */
+            #draftList, #historyList {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+                gap: 20px;
+            }
+            .list-item { margin-bottom: 0; }
         }
 
         /* Toast-besked nederst på skærmen */
@@ -120,8 +145,10 @@
 </head>
 <body class="dark-mode">
 <header>
-<button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
-<div class="header-logo">ROCKWOOL</div>
+    <div class="header-content">
+        <button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
+        <div class="header-logo">ROCKWOOL</div>
+    </div>
 </header>
 <div id="menuContent">
 <button onclick="location.reload()" class="menu-item">🏠 Forside</button>
@@ -150,7 +177,7 @@
     </div>
     <div class="form-full-width">
         <label>Beskrivelse</label>
-        <textarea id="bodyText" rows="6" placeholder="Skriv detaljer her..."></textarea>
+        <textarea id="bodyText" rows="7" placeholder="Skriv detaljer her..."></textarea>
     </div>
 </div>
 <button id="btnSave" class="btn-red">GEM SOM KLADDE</button>
@@ -167,8 +194,8 @@
 <div class="card">
 <h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
 <label>Vælg dato</label>
-<input id="historyDate" type="date" onchange="fetchHistory()" />
-<button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
+<input id="historyDate" type="date" onchange="fetchHistory()" style="max-width:300px;" />
+<button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px; max-width:300px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
 <div id="historyList" style="margin-top:20px;"></div>
 </div>
 </section>
@@ -298,7 +325,7 @@
         el('headline').value = ''; 
         el('bodyText').value = '';
 
-        // Vis diskret toast i 2 sekunder i stedet for stor pop-up
+        // Vis diskret toast i 2 sekunder
         showToast("✓ Kladde gemt!");
     };
 
@@ -319,7 +346,7 @@
                 </div>
                 <div class="body-content">${d.body}</div>
             </div>
-        `).join('') || "<p style='text-align:center; opacity:0.5;'>Ingen kladder endnu.</p>";
+        `).join('') || "<p style='text-align:center; opacity:0.5; grid-column: 1 / -1;'>Ingen kladder endnu.</p>";
     };
 
     window.editDraft = (index) => {
@@ -373,19 +400,19 @@
 
     window.fetchHistory = async () => {
         const date = el('historyDate').value;
-        el('historyList').innerHTML = "<p>Søger i arkivet...</p>";
+        el('historyList').innerHTML = "<p style='grid-column: 1 / -1;'>Søger i arkivet...</p>";
         const q = query(collection(db, "logs"), where("date", "==", date));
         const snap = await getDocs(q);
         let h = "";
         snap.forEach(doc => {
             const d = doc.data();
-            h += `<div class="card" style="margin-bottom:10px; border-left:4px solid var(--rock-red);">
-                <strong style="color:var(--rock-red);">${d.headline}</strong>
-                <small style="color:var(--text-muted);">Nr: ${d.workNr} | Tid: ${d.time}</small>
-                <p style="font-size:14px; white-space:pre-wrap; margin-top:10px;">${d.body}</p>
+            h += `<div class="card" style="margin-bottom:0; border-left:4px solid var(--rock-red);">
+                <strong style="color:var(--rock-red); font-size: 16px;">${d.headline}</strong>
+                <small style="color:var(--text-muted); display:block; margin-top:2px;">Nr: ${d.workNr} | Tid: ${d.time}</small>
+                <p style="font-size:14px; white-space:pre-wrap; margin-top:12px;">${d.body}</p>
             </div>`;
         });
-        el('historyList').innerHTML = h || "Ingen arkiverede logs fundet for denne dato.";
+        el('historyList').innerHTML = h || "<p style='grid-column: 1 / -1; opacity:0.5;'>Ingen arkiverede logs fundet for denne dato.</p>";
         el('btnPDF').style.display = h ? 'block' : 'none';
     };
 
