@@ -45,18 +45,22 @@
             box-sizing: border-box;
         }
         
-        /* Officielt ROCKWOOL logo billede-setup */
-        .header-logo-img {
+        /* Officielt Inline SVG ROCKWOOL Logo */
+        .header-logo-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .rockwool-svg-logo {
+            display: block;
             height: 38px;
             width: auto;
-            display: block;
         }
 
         .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
         .btn-menu:hover { background: rgba(255,255,255,0.35); }
 
         #menuContent { 
-            display:none; position:fixed; top:70px; left:20px; 
+            display:none; position:fixed; top:70px; right:20px; 
             background:var(--bg-card); border:1px solid var(--border); 
             border-radius:12px; z-index:2000; min-width: 220px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
@@ -186,8 +190,22 @@
 <body class="dark-mode">
 <header>
     <div class="header-content">
+        <!-- Logo i venstre side -->
+        <div class="header-logo-wrapper">
+            <svg class="rockwool-svg-logo" viewBox="0 0 310 50" height="38">
+                <!-- Hvid baggrund til vulkan-ikonet -->
+                <rect x="0" y="0" width="50" height="50" fill="#ffffff" rx="3"/>
+                <!-- Rød Vulkan -->
+                <polygon points="12,42 22,10 28,10 22,42" fill="#E60028"/>
+                <polygon points="38,42 28,10 22,10 32,42" fill="#E60028"/>
+                <!-- ROCKWOOL Tekst -->
+                <text x="62" y="38" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="34" fill="#ffffff" letter-spacing="0.5">ROCKWOOL</text>
+                <!-- Registered Trademark ® Symbol -->
+                <text x="294" y="20" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#ffffff">®</text>
+            </svg>
+        </div>
+        <!-- Menu i højre side -->
         <button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
-        <img class="header-logo-img" src="https://cdn.rockwool.com/siteassets/media/logos/rockwool-logo.svg" alt="ROCKWOOL Logo" />
     </div>
 </header>
 <div id="menuContent">
