@@ -45,11 +45,15 @@
             box-sizing: border-box;
         }
         
-        /* Billedlogo i headeren */
-        .header-logo-img {
+        /* ROCKWOOL Logo Setup */
+        .header-logo-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .rockwool-svg-logo {
+            display: block;
             height: 40px;
             width: auto;
-            display: block;
         }
 
         .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
@@ -186,8 +190,21 @@
 <body class="dark-mode">
 <header>
     <div class="header-content">
-        <!-- Det ønskede ROCKWOOL logo billede -->
-        <img class="header-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSU68AAAAUKEUk5T...[indlejret_billede]" alt="ROCKWOOL Logo" id="rwLogoImg" />
+        <!-- Det eksakte ROCKWOOL logo fra dit billede -->
+        <div class="header-logo-wrapper">
+            <svg class="rockwool-svg-logo" viewBox="0 0 310 50">
+                <!-- Hvid firkant -->
+                <rect x="0" y="0" width="50" height="50" fill="#ffffff"/>
+                <!-- Venstre vulkan-ben -->
+                <polygon points="5,41 23,8 24,8 14,41" fill="#E60028"/>
+                <!-- Højre vulkan-ben -->
+                <polygon points="45,41 27,8 26,8 36,41" fill="#E60028"/>
+                <!-- ROCKWOOL Tekst -->
+                <text x="60" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="39" fill="#ffffff" letter-spacing="-0.5">ROCKWOOL</text>
+                <!-- ® Symbol -->
+                <text x="296" y="21" font-family="Arial, sans-serif" font-weight="700" font-size="11" fill="#ffffff">®</text>
+            </svg>
+        </div>
         <!-- Menu i højre side -->
         <button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
     </div>
