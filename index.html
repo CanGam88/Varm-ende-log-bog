@@ -45,7 +45,7 @@
             box-sizing: border-box;
         }
         
-        /* Officielt Inline SVG ROCKWOOL Logo */
+        /* Officielt Inline SVG ROCKWOOL Logo med synlig afstand i vulkanen */
         .header-logo-wrapper {
             display: flex;
             align-items: center;
@@ -60,7 +60,7 @@
         .btn-menu:hover { background: rgba(255,255,255,0.35); }
 
         #menuContent { 
-            display:none; position:fixed; top:70px; right:20px; 
+            display:none; position:fixed; top:70px; right:30px; 
             background:var(--bg-card); border:1px solid var(--border); 
             border-radius:12px; z-index:2000; min-width: 220px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
@@ -195,9 +195,9 @@
             <svg class="rockwool-svg-logo" viewBox="0 0 310 50" height="38">
                 <!-- Hvid baggrund til vulkan-ikonet -->
                 <rect x="0" y="0" width="50" height="50" fill="#ffffff" rx="3"/>
-                <!-- Rød Vulkan -->
-                <polygon points="12,42 22,10 28,10 22,42" fill="#E60028"/>
-                <polygon points="38,42 28,10 22,10 32,42" fill="#E60028"/>
+                <!-- Rød Vulkan med synlig afstand i toppen -->
+                <polygon points="10,42 21,10 24.5,10 19.5,42" fill="#E60028"/>
+                <polygon points="40,42 29,10 25.5,10 30.5,42" fill="#E60028"/>
                 <!-- ROCKWOOL Tekst -->
                 <text x="62" y="38" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="34" fill="#ffffff" letter-spacing="0.5">ROCKWOOL</text>
                 <!-- Registered Trademark ® Symbol -->
