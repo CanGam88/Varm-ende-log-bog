@@ -45,15 +45,11 @@
             box-sizing: border-box;
         }
         
-        /* Officielt Inline SVG ROCKWOOL Logo med synlig afstand i vulkanen */
-        .header-logo-wrapper {
-            display: flex;
-            align-items: center;
-        }
-        .rockwool-svg-logo {
-            display: block;
-            height: 38px;
+        /* Billedlogo i headeren */
+        .header-logo-img {
+            height: 40px;
             width: auto;
+            display: block;
         }
 
         .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
@@ -190,20 +186,8 @@
 <body class="dark-mode">
 <header>
     <div class="header-content">
-        <!-- Logo i venstre side -->
-        <div class="header-logo-wrapper">
-            <svg class="rockwool-svg-logo" viewBox="0 0 310 50" height="38">
-                <!-- Hvid baggrund til vulkan-ikonet -->
-                <rect x="0" y="0" width="50" height="50" fill="#ffffff" rx="3"/>
-                <!-- Rød Vulkan med synlig afstand i toppen -->
-                <polygon points="10,42 21,10 24.5,10 19.5,42" fill="#E60028"/>
-                <polygon points="40,42 29,10 25.5,10 30.5,42" fill="#E60028"/>
-                <!-- ROCKWOOL Tekst -->
-                <text x="62" y="38" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="34" fill="#ffffff" letter-spacing="0.5">ROCKWOOL</text>
-                <!-- Registered Trademark ® Symbol -->
-                <text x="294" y="20" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#ffffff">®</text>
-            </svg>
-        </div>
+        <!-- Det ønskede ROCKWOOL logo billede -->
+        <img class="header-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSU68AAAAUKEUk5T...[indlejret_billede]" alt="ROCKWOOL Logo" id="rwLogoImg" />
         <!-- Menu i højre side -->
         <button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
     </div>
