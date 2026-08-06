@@ -45,14 +45,14 @@
             box-sizing: border-box;
         }
         
-        /* ROCKWOOL Logo Setup */
+        /* Korrekt proportioneret ROCKWOOL Logo */
         .header-logo-wrapper {
             display: flex;
             align-items: center;
         }
         .rockwool-svg-logo {
             display: block;
-            height: 40px;
+            height: 38px;
             width: auto;
         }
 
@@ -190,19 +190,18 @@
 <body class="dark-mode">
 <header>
     <div class="header-content">
-        <!-- Det eksakte ROCKWOOL logo fra dit billede -->
+        <!-- Præcist opbygget ROCKWOOL Logo i perfekt 1:1 format -->
         <div class="header-logo-wrapper">
-            <svg class="rockwool-svg-logo" viewBox="0 0 310 50">
-                <!-- Hvid firkant -->
-                <rect x="0" y="0" width="50" height="50" fill="#ffffff"/>
-                <!-- Venstre vulkan-ben -->
-                <polygon points="5,41 23,8 24,8 14,41" fill="#E60028"/>
-                <!-- Højre vulkan-ben -->
-                <polygon points="45,41 27,8 26,8 36,41" fill="#E60028"/>
-                <!-- ROCKWOOL Tekst -->
-                <text x="60" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="39" fill="#ffffff" letter-spacing="-0.5">ROCKWOOL</text>
-                <!-- ® Symbol -->
-                <text x="296" y="21" font-family="Arial, sans-serif" font-weight="700" font-size="11" fill="#ffffff">®</text>
+            <svg class="rockwool-svg-logo" viewBox="0 0 250 42">
+                <!-- Hvid Firkant -->
+                <rect x="0" y="1" width="40" height="40" fill="#ffffff" rx="1"/>
+                <!-- Rød Vulkan (Venstre & Højre ben) -->
+                <polygon points="7,34 18,8 21.5,8 15,34" fill="#E60028"/>
+                <polygon points="33,34 22,8 18.5,8 25,34" fill="#E60028"/>
+                <!-- ROCKWOOL Skrift (Bred & Proportional) -->
+                <text x="52" y="33" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="28" fill="#ffffff" letter-spacing="0.2">ROCKWOOL</text>
+                <!-- ® Symbol placeret ved 'L' -->
+                <text x="238" y="17" font-family="Arial, sans-serif" font-weight="700" font-size="9" fill="#ffffff">®</text>
             </svg>
         </div>
         <!-- Menu i højre side -->
