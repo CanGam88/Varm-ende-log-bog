@@ -45,7 +45,6 @@
             box-sizing: border-box;
         }
         
-        /* Korrekt proportioneret ROCKWOOL Logo */
         .header-logo-wrapper {
             display: flex;
             align-items: center;
@@ -98,7 +97,6 @@
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
         .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
-        /* Måneds-kalender modul til Historik */
         .calendar-wrapper {
             max-width: 580px;
             margin: 0 0 20px 0;
@@ -122,7 +120,6 @@
         }
         body.dark-mode .calendar-day { background: rgba(255,255,255,0.03); }
         
-        /* Datoer MED historik (Grøn ring) */
         .calendar-day.has-logs { 
             border-color: #10B981; 
             color: #10B981; 
@@ -132,7 +129,6 @@
         .calendar-day.has-logs:hover { background: #10B981; color: white; }
         .calendar-day.selected { background: var(--rock-red) !important; color: white !important; border-color: var(--rock-red) !important; }
 
-        /* Dato-sektions overskrifter i søgeresultater */
         .date-group {
             margin-top: 30px;
             margin-bottom: 15px;
@@ -190,17 +186,18 @@
 <body class="dark-mode">
 <header>
     <div class="header-content">
-        <!-- Præcist opbygget ROCKWOOL Logo i perfekt 1:1 format -->
+        <!-- Korrekt todelt vulkan (Billede 2 stil) -->
         <div class="header-logo-wrapper">
             <svg class="rockwool-svg-logo" viewBox="0 0 250 42">
                 <!-- Hvid Firkant -->
                 <rect x="0" y="1" width="40" height="40" fill="#ffffff" rx="1"/>
-                <!-- Rød Vulkan (Venstre & Højre ben) -->
-                <polygon points="7,34 18,8 21.5,8 15,34" fill="#E60028"/>
-                <polygon points="33,34 22,8 18.5,8 25,34" fill="#E60028"/>
-                <!-- ROCKWOOL Skrift (Bred & Proportional) -->
+                <!-- Venstre vulkantop med lodret inderkanals-snit -->
+                <polygon points="7,34 16,9 19,9 18,34" fill="#E60028"/>
+                <!-- Højre vulkantop med lodret inderkanals-snit -->
+                <polygon points="33,34 24,9 21,9 22,34" fill="#E60028"/>
+                <!-- ROCKWOOL Skrift -->
                 <text x="52" y="33" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="28" fill="#ffffff" letter-spacing="0.2">ROCKWOOL</text>
-                <!-- ® Symbol placeret ved 'L' -->
+                <!-- ® Symbol -->
                 <text x="238" y="17" font-family="Arial, sans-serif" font-weight="700" font-size="9" fill="#ffffff">®</text>
             </svg>
         </div>
