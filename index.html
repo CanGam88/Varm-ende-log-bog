@@ -34,7 +34,7 @@
         
         header { 
             background: var(--rock-red); 
-            height: 65px; color: white; position: sticky; top:0; z-index: 1000;
+            height: 60px; color: white; position: sticky; top:0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
         .header-content {
@@ -44,46 +44,53 @@
         }
         
         .header-logo-wrapper { display: flex; align-items: center; }
-        .header-logo-img { height: 38px; width: auto; display: block; }
+        .header-logo-img { height: 34px; width: auto; display: block; }
 
-        .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
+        .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 14px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; font-size: 13px; transition: background 0.2s; }
         .btn-menu:hover { background: rgba(255,255,255,0.35); }
 
         #menuContent { 
-            display:none; position:fixed; top:70px; right:30px; 
+            display:none; position:fixed; top:65px; right:30px; 
             background:var(--bg-card); border:1px solid var(--border); 
-            border-radius:12px; z-index:2000; min-width: 220px; 
+            border-radius:12px; z-index:2000; min-width: 200px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
         }
-        .menu-item { width:100%; padding:15px 20px; border:none; background:none; text-align:left; color:var(--text-main); font-weight:700; cursor:pointer; border-bottom:1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        .menu-item { width:100%; padding:12px 16px; border:none; background:none; text-align:left; color:var(--text-main); font-weight:700; cursor:pointer; border-bottom:1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 14px; }
         .menu-item:hover { background: rgba(0,0,0,0.05); }
 
-        .app-container { max-width: 650px; margin: 30px auto; width: 92%; flex: 1; transition: max-width 0.3s ease; }
-        .card { background: var(--bg-card); padding: 30px; border-radius: var(--radius); margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .app-container { max-width: 650px; margin: 20px auto; width: 92%; flex: 1; transition: max-width 0.3s ease; }
+        .card { background: var(--bg-card); padding: 24px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
         
-        .tab-container { display: flex; gap: 10px; margin-bottom: 25px; }
-        .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 14px; font-size: 13px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; transition: all 0.2s; }
+        /* Mere kompakte fane-knapper */
+        .tab-container { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab-btn { background: none; border: 2px solid var(--rock-red); color: var(--rock-red); padding: 10px 12px; font-size: 12px; font-weight: 800; border-radius: var(--btn-radius); cursor: pointer; flex: 1; text-transform: uppercase; transition: all 0.2s; }
         .tab-btn.active, .tab-btn:hover { background: var(--rock-red); color: white; box-shadow: 0 4px 12px rgba(230,0,40,0.3); }
         
         label { display: block; font-weight: 800; font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; margin-top: 15px; letter-spacing: 0.5px; }
         input, textarea { 
-            width: 100%; padding: 14px 16px; border-radius: 8px; border: 2px solid var(--border); 
+            width: 100%; padding: 12px 14px; border-radius: 8px; border: 2px solid var(--border); 
             background-color: var(--input-bg) !important; color: var(--text-main) !important; 
-            font-size: 16px; box-sizing: border-box; outline: none; transition: border-color 0.2s;
+            font-size: 15px; box-sizing: border-box; outline: none; transition: border-color 0.2s;
         }
         input:focus, textarea:focus { border-color: var(--rock-red); }
 
-        .btn-red { background: var(--rock-red); color: white; border: none; padding: 16px; width: 100%; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 15px; margin-top: 25px; text-transform: uppercase; transition: transform 0.1s, opacity 0.2s; }
+        /* Mere stilren og kompakt GEM knap */
+        .btn-red { 
+            background: var(--rock-red); color: white; border: none; 
+            padding: 12px 24px; width: 100%; max-width: 320px; margin: 20px auto 0 auto; display: block;
+            border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; font-size: 14px; 
+            text-transform: uppercase; transition: transform 0.1s, opacity 0.2s; 
+        }
         .btn-red:hover { opacity: 0.95; transform: translateY(-1px); }
         .btn-red:active { transform: translateY(0); }
 
-        .list-item { padding: 18px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+        .list-item { padding: 16px; border-bottom: 1px solid var(--border); border-left: 6px solid var(--rock-red); margin-bottom: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
         .list-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .list-item strong { font-size: 16px; color: var(--text-main); display: block; margin-bottom: 4px; }
+        .list-item strong { font-size: 15px; color: var(--text-main); display: block; margin-bottom: 4px; }
         .list-item .info-line { font-size: 12px; color: var(--text-muted); display: block; }
         .list-item .body-content { color: var(--text-main); font-size: 14px; white-space: pre-wrap; display: block; padding: 12px; background: rgba(0,0,0,0.15); border-radius: 6px; margin-top: 10px; border: 1px solid var(--border); }
         .list-actions { display: flex; gap: 8px; margin-left: 10px; }
-        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 6px 14px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; transition: all 0.2s; }
+        .btn-small { background: none; border: 1px solid var(--rock-red); color: var(--rock-red); padding: 5px 12px; border-radius: var(--btn-radius); font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; white-space: nowrap; transition: all 0.2s; }
         .btn-small:hover { background: var(--rock-red); color: white; }
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
         .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
@@ -93,37 +100,35 @@
             max-width: 580px;
             margin: 0 0 20px 0;
             background: rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 16px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
         .calendar-title-group { display: flex; align-items: center; gap: 10px; }
-        .calendar-title { font-weight: 800; font-size: 17px; text-transform: uppercase; color: var(--text-main); letter-spacing: 1px; }
-        .calendar-nav-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .calendar-title { font-weight: 800; font-size: 16px; text-transform: uppercase; color: var(--text-main); letter-spacing: 1px; }
+        .calendar-nav-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; transition: all 0.2s; }
         .calendar-nav-btn:hover { border-color: var(--rock-red); color: var(--rock-red); }
         
-        .btn-today { background: var(--rock-red); color: white; border: none; padding: 6px 14px; border-radius: var(--btn-radius); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
+        .btn-today { background: var(--rock-red); color: white; border: none; padding: 5px 12px; border-radius: var(--btn-radius); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
         .btn-today:hover { opacity: 0.9; }
 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; justify-items: center; }
-        .calendar-day-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; justify-items: center; }
+        .calendar-day-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 4px; }
         .calendar-day { 
-            width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; 
-            border-radius: 50%; font-size: 14px; font-weight: 700; cursor: pointer; 
+            width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; font-size: 13px; font-weight: 700; cursor: pointer; 
             background: rgba(0,0,0,0.05); border: 2px solid transparent; color: var(--text-muted);
             transition: all 0.2s; box-sizing: border-box; position: relative;
         }
         body.dark-mode .calendar-day { background: rgba(255,255,255,0.03); }
         
-        /* Dags Dato Markering (Blå/Hvid Stiplet Ring) */
         .calendar-day.is-today {
             outline: 2px dashed #3B82F6;
             outline-offset: -3px;
             font-weight: 900;
         }
 
-        /* Datoer MED historik (Grøn ring) */
         .calendar-day.has-logs { 
             border-color: #10B981; 
             color: #10B981; 
@@ -133,15 +138,14 @@
         .calendar-day.has-logs:hover { background: #10B981; color: white; }
         .calendar-day.selected { background: var(--rock-red) !important; color: white !important; border-color: var(--rock-red) !important; }
 
-        /* Dato-sektions overskrifter i søgeresultater */
         .date-group {
-            margin-top: 30px;
-            margin-bottom: 15px;
+            margin-top: 25px;
+            margin-bottom: 12px;
             border-bottom: 2px solid var(--rock-red);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
         }
         .date-group-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--rock-red);
             letter-spacing: 0.5px;
@@ -156,15 +160,15 @@
         }
 
         .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-        .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 30px; width: 85%; max-width: 400px; border-radius: var(--radius); border-top: 6px solid var(--rock-red); text-align: center; }
-        footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px; }
+        .modal-content { background: var(--bg-card); color: var(--text-main); margin: 15% auto; padding: 25px; width: 85%; max-width: 380px; border-radius: var(--radius); border-top: 5px solid var(--rock-red); text-align: center; }
+        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
 
         @media (min-width: 800px) {
             .app-container { max-width: 1100px; }
-            .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; }
+            .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 25px; }
             .form-full-width { grid-column: span 2; }
             .form-grid label { margin-top: 0; }
-            textarea { rows: 8; }
+            textarea { rows: 7; }
             
             #draftList {
                 display: grid;
@@ -179,13 +183,13 @@
         }
 
         #toast {
-            visibility: hidden; min-width: 220px; background-color: #10B981; color: #ffffff;
-            text-align: center; border-radius: 30px; padding: 14px 28px; position: fixed;
-            z-index: 3000; left: 50%; bottom: 30px; transform: translateX(-50%);
-            font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            visibility: hidden; min-width: 200px; background-color: #10B981; color: #ffffff;
+            text-align: center; border-radius: 30px; padding: 12px 24px; position: fixed;
+            z-index: 3000; left: 50%; bottom: 25px; transform: translateX(-50%);
+            font-weight: 700; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             opacity: 0; transition: opacity 0.3s ease, bottom 0.3s ease;
         }
-        #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 35px; }
 </style>
 </head>
 <body class="dark-mode">
@@ -258,7 +262,7 @@
     <input id="historySearch" type="text" placeholder="Søg på nr, overskrift eller tekst (f.eks. Ropex, Leje, 12345)..." oninput="handleGlobalSearch()" />
 </div>
 
-<button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px; max-width:300px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
+<button id="btnPDF" class="btn-red" style="display:none; margin-bottom:15px; max-width:280px;" onclick="generatePDF()">EKSPORTÉR TIL PDF</button>
 <div id="historyList" style="margin-top:20px;"></div>
 </div>
 </section>
@@ -594,7 +598,7 @@
                 const timeText = d.time ? `Tid: ${d.time}` : 'Tid: Ej angivet';
                 html += `
                     <div class="card" style="margin-bottom:0; border-left:4px solid var(--rock-red);">
-                        <strong style="color:var(--rock-red); font-size: 16px;">${d.headline}</strong>
+                        <strong style="color:var(--rock-red); font-size: 15px;">${d.headline}</strong>
                         <small style="color:var(--text-muted); display:block; margin-top:2px;">Nr: ${d.workNr} | ${timeText}</small>
                         <p style="font-size:14px; white-space:pre-wrap; margin-top:12px;">${d.body}</p>
                     </div>
