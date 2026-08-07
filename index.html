@@ -38,22 +38,13 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
         .header-content {
-            width: 100%;
-            height: 100%;
-            padding: 0 30px;
+            width: 100%; height: 100%; padding: 0 30px;
             display: flex; justify-content: space-between; align-items: center;
             box-sizing: border-box;
         }
         
-        .header-logo-wrapper {
-            display: flex;
-            align-items: center;
-        }
-        .rockwool-svg-logo {
-            display: block;
-            height: 38px;
-            width: auto;
-        }
+        .header-logo-wrapper { display: flex; align-items: center; }
+        .header-logo-img { height: 38px; width: auto; display: block; }
 
         .btn-menu { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 18px; border-radius: var(--btn-radius); cursor: pointer; font-weight: 700; transition: background 0.2s; }
         .btn-menu:hover { background: rgba(255,255,255,0.35); }
@@ -97,6 +88,7 @@
         .btn-small.delete { border-color: var(--text-muted); color: var(--text-muted); }
         .btn-small.delete:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
+        /* Måneds-kalender modul */
         .calendar-wrapper {
             max-width: 580px;
             margin: 0 0 20px 0;
@@ -105,21 +97,33 @@
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; }
+        .calendar-title-group { display: flex; align-items: center; gap: 10px; }
         .calendar-title { font-weight: 800; font-size: 17px; text-transform: uppercase; color: var(--text-main); letter-spacing: 1px; }
         .calendar-nav-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-weight: bold; cursor: pointer; transition: all 0.2s; }
         .calendar-nav-btn:hover { border-color: var(--rock-red); color: var(--rock-red); }
         
+        .btn-today { background: var(--rock-red); color: white; border: none; padding: 6px 14px; border-radius: var(--btn-radius); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
+        .btn-today:hover { opacity: 0.9; }
+
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; justify-items: center; }
         .calendar-day-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
         .calendar-day { 
             width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; 
             border-radius: 50%; font-size: 14px; font-weight: 700; cursor: pointer; 
             background: rgba(0,0,0,0.05); border: 2px solid transparent; color: var(--text-muted);
-            transition: all 0.2s; box-sizing: border-box;
+            transition: all 0.2s; box-sizing: border-box; position: relative;
         }
         body.dark-mode .calendar-day { background: rgba(255,255,255,0.03); }
         
+        /* Dags Dato Markering (Blå/Hvid Stiplet Ring) */
+        .calendar-day.is-today {
+            outline: 2px dashed #3B82F6;
+            outline-offset: -3px;
+            font-weight: 900;
+        }
+
+        /* Datoer MED historik (Grøn ring) */
         .calendar-day.has-logs { 
             border-color: #10B981; 
             color: #10B981; 
@@ -129,6 +133,7 @@
         .calendar-day.has-logs:hover { background: #10B981; color: white; }
         .calendar-day.selected { background: var(--rock-red) !important; color: white !important; border-color: var(--rock-red) !important; }
 
+        /* Dato-sektions overskrifter i søgeresultater */
         .date-group {
             margin-top: 30px;
             margin-bottom: 15px;
@@ -186,41 +191,9 @@
 <body class="dark-mode">
 <header>
     <div class="header-content">
-        <!-- 1:1 Præcis vektor-gengivelse af dit billed-logo -->
         <div class="header-logo-wrapper">
-            <svg class="rockwool-svg-logo" viewBox="0 0 220 38">
-                <!-- Hvid Boks -->
-                <rect x="0" y="0" width="38" height="38" fill="#ffffff"/>
-                <!-- Vulkanens 2 røde ben -->
-                <polygon points="5,30 14,30 19,8 12.5,8" fill="#E60028"/>
-                <polygon points="33,30 24,30 19,8 25.5,8" fill="#E60028"/>
-                <!-- R - O - C - K - W - O - O - L Vektor-bogstaver -->
-                <g fill="#ffffff">
-                    <!-- R -->
-                    <path d="M 48 10 L 59 10 C 63 10 65 11 65 14 C 65 16 63 18 60 18 L 65 29 L 59 29 L 55 19 L 53 19 L 53 29 L 48 29 Z M 53 14 L 53 16 L 58 16 C 59.5 16 60.5 15.5 60.5 15 C 60.5 14.5 59.5 14 58 14 Z"/>
-                    <!-- O -->
-                    <path d="M 72 9.5 C 78 9.5 82 13.5 82 19.5 C 82 25.5 78 29.5 72 29.5 C 66 29.5 62 25.5 62 19.5 C 62 13.5 66 9.5 72 9.5 Z M 72 14 C 69 14 67.2 16 67.2 19.5 C 67.2 23 69 25 72 25 C 75 25 76.8 23 76.8 19.5 C 76.8 16 75 14 72 14 Z"/>
-                    <!-- C -->
-                    <path d="M 94 13.5 L 89.5 15 C 88.8 14.2 87.8 13.8 86.5 13.8 C 84 13.8 82.5 16 82.5 19.5 C 82.5 23 84 25.2 86.5 25.2 C 87.8 25.2 88.8 24.8 89.5 24 L 94 25.5 C 92.5 28 89.8 29.5 86.5 29.5 C 81 29.5 77 25.5 77 19.5 C 77 13.5 81 9.5 86.5 9.5 C 89.8 9.5 92.5 11 94 13.5 Z"/>
-                    <!-- K -->
-                    <path d="M 96 10 L 101 10 L 101 17 L 107 10 L 113 10 L 106 17.5 L 113.5 29 L 107.5 29 L 101 19 L 101 29 L 96 29 Z"/>
-                    <!-- W -->
-                    <path d="M 115 10 L 120 10 L 123.5 23 L 127 10 L 131 10 L 134.5 23 L 138 10 L 143 10 L 137 29 L 132.5 29 L 129 17 L 125.5 29 L 121 29 Z"/>
-                    <!-- O -->
-                    <path d="M 153 9.5 C 159 9.5 163 13.5 163 19.5 C 163 25.5 159 29.5 153 29.5 C 147 29.5 143 25.5 143 19.5 C 143 13.5 147 9.5 153 9.5 Z M 153 14 C 150 14 148.2 16 148.2 19.5 C 148.2 23 150 25 153 25 C 156 25 157.8 23 157.8 19.5 C 157.8 16 156 14 153 14 Z"/>
-                    <!-- O -->
-                    <path d="M 174 9.5 C 180 9.5 184 13.5 184 19.5 C 184 25.5 180 29.5 174 29.5 C 168 29.5 164 25.5 164 19.5 C 164 13.5 168 9.5 174 9.5 Z M 174 14 C 171 14 169.2 16 169.2 19.5 C 169.2 23 171 25 174 25 C 177 25 178.8 23 178.8 19.5 C 178.8 16 177 14 174 14 Z"/>
-                    <!-- L -->
-                    <path d="M 186 10 L 191 10 L 191 25 L 200 25 L 200 29 L 186 29 Z"/>
-                </g>
-                <!-- ® Cirkel og Bogstav -->
-                <g fill="#ffffff">
-                    <circle cx="204" cy="12" r="3.5" fill="none" stroke="#ffffff" stroke-width="0.8"/>
-                    <text x="202.5" y="14" font-family="Arial, sans-serif" font-weight="bold" font-size="5" fill="#ffffff">R</text>
-                </g>
-            </svg>
+            <img class="header-logo-img" src="rockwool-logo.png" alt="ROCKWOOL Logo" />
         </div>
-        <!-- Menu i højre side -->
         <button onclick="toggleMenu()" class="btn-menu">MENU ▾</button>
     </div>
 </header>
@@ -231,7 +204,7 @@
 <main class="app-container">
 <div class="tab-container">
 <button id="tabNew" class="tab-btn active" onclick="showPage('pageNew', 'tabNew')">Ny Log</button>
-<button id="tabDrafts" class="tab-btn" onclick="showPage('pageDrafts', 'tabDrafts')">Kladder</button>
+<button id="tabDrafts" class="tab-btn" onclick="showPage('pageDrafts', 'tabDrafts')">Dagens Logs</button>
 <button id="tabHistory" class="tab-btn" onclick="showPage('pageHistory', 'tabHistory')">Historik</button>
 </div>
 <section id="pageNew">
@@ -254,24 +227,27 @@
         <textarea id="bodyText" rows="7" placeholder="Skriv detaljer her..."></textarea>
     </div>
 </div>
-<button id="btnSave" class="btn-red">GEM SOM KLADDE</button>
+<button id="btnSave" class="btn-red">GEM</button>
 </div>
 </section>
 <section id="pageDrafts" style="display:none">
 <div class="card">
-<h2 style="color:var(--rock-red); margin-top:0;">DAGENS KLADDER</h2>
+<h2 style="color:var(--rock-red); margin-top:0;">DAGENS LOGS</h2>
 <div id="draftList"></div>
 <button id="btnSendAll" class="btn-red" style="display:none;">SEND OG GEM</button>
 </div>
 </section>
 <section id="pageHistory" style="display:none">
 <div class="card">
-<h2 style="color:var(--rock-red); margin-top:0;">HISTORIK (ARKIV)</h2>
+<h2 style="color:var(--rock-red); margin-top:0;">KALENDER</h2>
 
 <div class="calendar-wrapper">
     <div class="calendar-header">
         <button class="calendar-nav-btn" onclick="changeMonth(-1)">◄</button>
-        <div class="calendar-title" id="calendarTitle">Måned År</div>
+        <div class="calendar-title-group">
+            <div class="calendar-title" id="calendarTitle">Måned År</div>
+            <button class="btn-today" onclick="goToToday()">I dag</button>
+        </div>
         <button class="calendar-nav-btn" onclick="changeMonth(1)">►</button>
     </div>
     <div class="calendar-grid" id="calendarGrid"></div>
@@ -289,7 +265,7 @@
 </main>
 <footer>App lavet af Lasse Gamborg</footer>
 
-<div id="toast">✓ Kladde gemt!</div>
+<div id="toast">✓ Log gemt!</div>
 
 <div id="customModal" class="modal">
 <div class="modal-content" id="modal-body"></div>
@@ -327,7 +303,7 @@
 
     const monthNames = ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"];
 
-    const showToast = (msg = "✓ Kladde gemt!") => {
+    const showToast = (msg = "✓ Log gemt!") => {
         const toast = el('toast');
         toast.innerText = msg;
         toast.classList.add('show');
@@ -337,7 +313,7 @@
     const updateDraftTabBadge = () => {
         const drafts = JSON.parse(localStorage.getItem('rw_drafts') || '[]');
         const count = drafts.length;
-        el('tabDrafts').innerText = count > 0 ? `KLADDER (${count})` : 'KLADDER';
+        el('tabDrafts').innerText = count > 0 ? `DAGENS LOGS (${count})` : 'DAGENS LOGS';
     };
 
     window.addEventListener('beforeunload', (e) => {
@@ -417,7 +393,7 @@
 
         el('headline').value = ''; el('bodyText').value = '';
         updateDraftTabBadge();
-        showToast("✓ Kladde gemt!");
+        showToast("✓ Log gemt!");
     };
 
     window.renderDrafts = () => {
@@ -437,7 +413,7 @@
                 </div>
                 <div class="body-content">${d.body}</div>
             </div>
-        `).join('') || "<p style='text-align:center; opacity:0.5; grid-column: 1 / -1;'>Ingen kladder endnu.</p>";
+        `).join('') || "<p style='text-align:center; opacity:0.5; grid-column: 1 / -1;'>Ingen logs endnu i dag.</p>";
     };
 
     window.editDraft = (index) => {
@@ -480,9 +456,18 @@
         renderCalendarMonth();
     };
 
+    window.goToToday = () => {
+        currentViewDate = new Date();
+        selectedHistoryDate = getToday();
+        el('historySearch').value = '';
+        renderCalendarMonth();
+        fetchHistoryForSelectedDate();
+    };
+
     const renderCalendarMonth = async () => {
         const year = currentViewDate.getFullYear();
         const month = currentViewDate.getMonth();
+        const todayStr = getToday();
         
         el('calendarTitle').innerText = `${monthNames[month]} ${year}`;
         
@@ -514,9 +499,11 @@
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const hasLogs = activeDates.has(dateStr);
             const isSelected = dateStr === selectedHistoryDate;
+            const isToday = dateStr === todayStr;
 
             let classes = "calendar-day";
             if(hasLogs) classes += " has-logs";
+            if(isToday) classes += " is-today";
             if(isSelected) classes += " selected";
 
             html += `<div class="${classes}" onclick="selectCalendarDate('${dateStr}')">${d}</div>`;
